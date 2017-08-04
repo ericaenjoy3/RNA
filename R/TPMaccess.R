@@ -21,7 +21,10 @@
 #' import addgrids3d
 ###
 
-#' export SepTPMCnt
+#' @title read in Salmon differential expression file
+#' @name SepTPMCnt
+#' @rdname SepTPMCnt-methods
+#' @export SepTPMCnt
 SepTPMCnt=function(fin) {
   dat=fread(fin)
   tpm=apply(dat[,-1,with=F],2,function(x)as.numeric(gsub("(.+);(.+)","\\1",x)))
@@ -35,7 +38,10 @@ SepTPMCnt=function(fin) {
   return(list(tpm=tpm,cnt=cnt,rpm=rpm,tpm.grp=tpm.grp))
 }
 
-#' export lmAdjCovar
+#' @title lmAdjCovar
+#' @name lmAdjCovar
+#' @rdname lmAdjCovar-methods
+#' @export lmAdjCovar
 lmAdjCovar=function(x,covar,add.mean=TRUE){
 #function to correct for covariates using linear regression
 #x, a matrix of gene expression data with genes in the rows and samples in the cols
@@ -47,13 +53,19 @@ lmAdjCovar=function(x,covar,add.mean=TRUE){
 	t(lm(x~.,data=covar)$residuals)+if(add.mean){colMeans(x)}else{0}
 }
 
-#' export loessnorm
+#' @title loessnorm
+#' @name loessnorm
+#' @rdname loessnorm-methods
+#' @export loessnorm
 loessnorm=function(tpm,small=0.05){
   tpm.norm=normalize.loess(tpm+small,subset=grep("spikein", row.names(tpm)))
   return(tpm.norm)
 }
 
-#' export rdcntnorm
+#' @title rdcntnorm
+#' @name rdcntnorm
+#' @rdname rdcntnorm-methods
+#' @export rdcntnorm
 rdcntnorm=function(tpm,stats) {
   frac=stats$spikein/(stats$spikein+stats$mm10)
   normfac=mean(frac)/frac
@@ -61,10 +73,14 @@ rdcntnorm=function(tpm,stats) {
   return(tpm.norm)
 }
 
+#' @title distplot
+#' @name distplot
+#' @rdname distplot-methods
+#' @description
 #' tpm.value either normalised to spikein or not
 #' tpm.value either spikein, non-spikein, or all
 #' idx for selecting differnetially expressed genes
-#' export distplot
+#' @export distplot
 distplot=function(tpm.value,grps,ylab,pngfout) {
   dat=data.table(tpm.value)
   ldat=melt(dat)
@@ -76,7 +92,10 @@ distplot=function(tpm.value,grps,ylab,pngfout) {
   dev.off()
 }
 
-#' export corplot
+#' @title corplot
+#' @name corplot
+#' @rdname corplot-methods
+#' @export corplot
 corplot=function(tpm.value,grps,pngfout) {
   tpm.value=tpm.value
   thresh=floor(quantile(as.matrix(tpm.value),probs=0.999))
@@ -92,7 +111,10 @@ corplot=function(tpm.value,grps,pngfout) {
   dev.off()
 }
 
-#' export hireplot
+#' @title hireplot
+#' @name hireplot
+#' @rdname hireplot-methods
+#' @export hireplot
 hireplot=function(tpm.value,grps,pngfout) {
   corstats=cor(tpm.value,method="spearman")
   if(!is.factor(grps)) {grps=factor(grps,levels=unique(grps),ordered=T)}
@@ -102,7 +124,10 @@ hireplot=function(tpm.value,grps,pngfout) {
   dev.off()
 }
 
-#' export heatcorplot
+#' @title heatcorplot
+#' @name heatcorplot
+#' @rdname heatcorplot-methods
+#' @export heatcorplot
 heatcorplot=function(tpm.value,grps,pngfout) {
   # corstats=cor(tpm.value[idx,],method="spearman")
   # ana.col=data.frame(Group=grps)
@@ -116,7 +141,10 @@ heatcorplot=function(tpm.value,grps,pngfout) {
   dev.off()
 }
 
-#' export bplot
+#' @title bplot
+#' @name bplot
+#' @rdname bplot-methods
+#' @export bplot
 bplot=function(tpm.value,grps,title,pngfout,maxPcnt=0.80,ylab=expression(paste(log[2], "(TPM)")),isLog=FALSE,small=0.05) {
   if(!isLog) dat=log2(tpm.value+small)
   map.it=grps
@@ -138,7 +166,10 @@ bplot=function(tpm.value,grps,title,pngfout,maxPcnt=0.80,ylab=expression(paste(l
   dev.off()
 }
 
-#' export PCAplot
+#' @title PCAplot
+#' @name PCAplot
+#' @rdname PCAplot-methods
+#' @export PCAplot
 PCAplot=function(tpm.value,grps,pngfout,fout=NULL,excl.col=NULL,ntop=Inf,isLog=FALSE,small=0.05) {
   tpm.value=tpm.value
   out=function(dat,fout) {
@@ -181,8 +212,12 @@ PCAplot=function(tpm.value,grps,pngfout,fout=NULL,excl.col=NULL,ntop=Inf,isLog=F
   dev.off()
 }
 
+#' @title MAplot
+#' @name MAplot
+#' @rdname MAplot-methods
+#' @description
 #' plot of log2FC over pvalue during differential analysis
-#' export MAplot
+#' @export MAplot
 MAplot=function(dd, pngfout) {
   nd=dd
   nd$nlogpval=-log10(nd$P.Value)
@@ -194,7 +229,10 @@ MAplot=function(dd, pngfout) {
   dev.off()
 }
 
-#' export BICplot
+#' @title BICplot
+#' @name BICplot
+#' @rdname BICplot-methods
+#' @export BICplot
 BICplot=function(g,BIC,pngfout) {
   dd=data.frame(g=g,BIC=BIC)
   p1=ggplot(dd, aes(x=g, y=BIC)) + geom_point(colour="#FF9999")+xlab("Cluster Size")+ylab("BIC")
@@ -204,8 +242,12 @@ BICplot=function(g,BIC,pngfout) {
   dev.off()
 }
 
+#' @title diffHeatmap
+#' @name diffHeatmap
+#' @rdname diffHeatmap-methods
+#' @description
 #' heatmap during or after differential analysis
-#' export diffHeatmap
+#' @export diffHeatmap
 diffHeatmap=function(tpm.value,col.idx,row.idx,pngfout,cutreek=NULL,cut.alg=c("pam","hclust","emmix"),rank.man=FALSE,log.it.already=FALSE,scale.it=TRUE,cluster_columns_par=TRUE,cluster_rows_par=TRUE,show_row_dend_par=FALSE,small=0.05,...) {
   tpm.value=tpm.value[row.idx,col.idx]
   if (!log.it.already) {tpm.value=log2(tpm.value+small)}
@@ -237,9 +279,13 @@ diffHeatmap=function(tpm.value,col.idx,row.idx,pngfout,cutreek=NULL,cut.alg=c("p
   }
 }
 
+#' @title limmaDiff
+#' @name limmaDiff
+#' @rdname limmaDiff-methods
+#' @description
 #' tpm.value either normalised to spikein or not
 #' filtering of genes must be done before hand
-#' export limmaDiff
+#' @export limmaDiff
 limmaDiff=function(tpm.value.ori,grps,dout,pat,MA.it=TRUE,HEAT.it=TRUE,GO.it=TRUE,DiffOut.it=TRUE,logFCthresh=1,PValtrhesh=0.05,log2.it=T,small=0.05) {
   stopifnot(all(tpm.value.ori>=0))
   if (!is.factor(grps)) {grps=factor(grps)}
@@ -290,8 +336,12 @@ limmaDiff=function(tpm.value.ori,grps,dout,pat,MA.it=TRUE,HEAT.it=TRUE,GO.it=TRU
   return(dat)
 }
 
+#' @title lineGraph
+#' @name lineGraph
+#' @rdname lineGraph-methods
+#' @description
 #' line graphs of clustering
-#' export lineGraph
+#' @export lineGraph
 lineGraph=function(tpm.value,col.idx,row.idx,clusters,pngfout,log.it.already=FALSE,mean.it=FALSE,small=0.05) {
   tpm.value=tpm.value[row.idx,col.idx]
   if (!log.it.already) {tpm.value=log2(tpm.value+small)}
