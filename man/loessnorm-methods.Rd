@@ -2,10 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{loessnorm}
 \alias{loessnorm}
-\title{export loessnorm}
+\title{loessnorm}
 \usage{
 loessnorm(tpm, small = 0.05)
-}
-\description{
-export loessnorm
 }

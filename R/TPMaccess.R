@@ -3,22 +3,22 @@
 #' Read in TPM from Salmon output and differential analysis
 #'
 #' @author Erica Liu \email{ericaenjoy3@@gmail.com}
-#' import data.table
-#' import limma
-#' import affy
-#' import ggplot2
-#' import scatterplot3d
-#' import RColorBrewer
-#' import grDevices
-#' import scales
-#' import GGally
-#' import GOtest
-#' import ape
-#' import pheatmap
-#' import ComplexHeatmap
-#' import circlize
-#' import multiplot
-#' import addgrids3d
+#' @import data.table
+#' @import limma
+#' @import affy
+#' @import ggplot2
+#' @import scatterplot3d
+#' @import RColorBrewer
+#' @import grDevices
+#' @import scales
+#' @import GGally
+#' @import GOtest
+#' @import ape
+#' @import pheatmap
+#' @import ComplexHeatmap
+#' @import circlize
+#' @import multiplot
+#' @import addgrids3d
 ###
 
 #' @title read in Salmon differential expression file

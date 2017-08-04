@@ -2,10 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{rdcntnorm}
 \alias{rdcntnorm}
-\title{export rdcntnorm}
+\title{rdcntnorm}
 \usage{
 rdcntnorm(tpm, stats)
-}
-\description{
-export rdcntnorm
 }

@@ -2,8 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{diffHeatmap}
 \alias{diffHeatmap}
-\title{heatmap during or after differential analysis
-export diffHeatmap}
+\title{diffHeatmap}
 \usage{
 diffHeatmap(tpm.value, col.idx, row.idx, pngfout, cutreek = NULL,
   cut.alg = c("pam", "hclust", "emmix"), rank.man = FALSE,
@@ -12,5 +11,4 @@ diffHeatmap(tpm.value, col.idx, row.idx, pngfout, cutreek = NULL,
 }
 \description{
 heatmap during or after differential analysis
-export diffHeatmap
 }

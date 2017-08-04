@@ -2,10 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{hireplot}
 \alias{hireplot}
-\title{export hireplot}
+\title{hireplot}
 \usage{
 hireplot(tpm.value, grps, pngfout)
-}
-\description{
-export hireplot
 }

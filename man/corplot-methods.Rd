@@ -2,10 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{corplot}
 \alias{corplot}
-\title{export corplot}
+\title{corplot}
 \usage{
 corplot(tpm.value, grps, pngfout)
-}
-\description{
-export corplot
 }

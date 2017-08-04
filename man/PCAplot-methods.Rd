@@ -2,11 +2,8 @@
 % Please edit documentation in R/TPMaccess.R
 \name{PCAplot}
 \alias{PCAplot}
-\title{export PCAplot}
+\title{PCAplot}
 \usage{
 PCAplot(tpm.value, grps, pngfout, fout = NULL, excl.col = NULL,
   ntop = Inf, isLog = FALSE, small = 0.05)
-}
-\description{
-export PCAplot
 }

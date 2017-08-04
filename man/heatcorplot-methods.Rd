@@ -2,10 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{heatcorplot}
 \alias{heatcorplot}
-\title{export heatcorplot}
+\title{heatcorplot}
 \usage{
 heatcorplot(tpm.value, grps, pngfout)
-}
-\description{
-export heatcorplot
 }

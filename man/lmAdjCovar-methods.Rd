@@ -2,10 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{lmAdjCovar}
 \alias{lmAdjCovar}
-\title{export lmAdjCovar}
+\title{lmAdjCovar}
 \usage{
 lmAdjCovar(x, covar, add.mean = TRUE)
-}
-\description{
-export lmAdjCovar
 }

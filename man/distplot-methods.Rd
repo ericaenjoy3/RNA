@@ -2,10 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{distplot}
 \alias{distplot}
-\title{tpm.value either normalised to spikein or not
-tpm.value either spikein, non-spikein, or all
-idx for selecting differnetially expressed genes
-export distplot}
+\title{distplot}
 \usage{
 distplot(tpm.value, grps, ylab, pngfout)
 }
@@ -13,5 +10,4 @@ distplot(tpm.value, grps, ylab, pngfout)
 tpm.value either normalised to spikein or not
 tpm.value either spikein, non-spikein, or all
 idx for selecting differnetially expressed genes
-export distplot
 }

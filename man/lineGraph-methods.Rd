@@ -2,13 +2,11 @@
 % Please edit documentation in R/TPMaccess.R
 \name{lineGraph}
 \alias{lineGraph}
-\title{line graphs of clustering
-export lineGraph}
+\title{lineGraph}
 \usage{
 lineGraph(tpm.value, col.idx, row.idx, clusters, pngfout,
   log.it.already = FALSE, mean.it = FALSE, small = 0.05)
 }
 \description{
 line graphs of clustering
-export lineGraph
 }

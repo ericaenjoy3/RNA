@@ -2,12 +2,10 @@
 % Please edit documentation in R/TPMaccess.R
 \name{MAplot}
 \alias{MAplot}
-\title{plot of log2FC over pvalue during differential analysis
-export MAplot}
+\title{MAplot}
 \usage{
 MAplot(dd, pngfout)
 }
 \description{
 plot of log2FC over pvalue during differential analysis
-export MAplot
 }

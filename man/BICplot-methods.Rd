@@ -2,10 +2,7 @@
 % Please edit documentation in R/TPMaccess.R
 \name{BICplot}
 \alias{BICplot}
-\title{export BICplot}
+\title{BICplot}
 \usage{
 BICplot(g, BIC, pngfout)
-}
-\description{
-export BICplot
 }

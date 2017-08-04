@@ -2,11 +2,8 @@
 % Please edit documentation in R/TPMaccess.R
 \name{bplot}
 \alias{bplot}
-\title{export bplot}
+\title{bplot}
 \usage{
 bplot(tpm.value, grps, title, pngfout, maxPcnt = 0.8,
   ylab = expression(paste(log[2], "(TPM)")), isLog = FALSE, small = 0.05)
-}
-\description{
-export bplot
 }
