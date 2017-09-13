@@ -79,7 +79,8 @@ setMethod(f = "lmAdjCovar",
   	stopifnot(ncol(x) == nrow(covar))
   	colnames(covar) <- paste0('V', 1:ncol(covar))
   	x <- t(x)
-  	t(lm(x~., data = covar)$residuals) + if(add.mean){colMeans(x)} else {0}
+  	t(lm(x~., data = covar)$residuals) +
+      if(add.mean){colMeans(x)} else {0}
   }
 )
 
@@ -96,7 +97,8 @@ setGeneric(name="loessnorm",
 setMethod(f = "loessnorm",
   signature = c("tpm", "ANY"),
   definition = function(obj, small = 0.05){
-    tpm.norm <- normalize.loess(obj@tpm.value + small, subset = grep("spikein", row.names(tpm)))
+    tpm.norm <- normalize.loess(obj@tpm.value + small,
+      subset = grep("spikein", row.names(tpm)))
     return(tpm.norm)
   }
 )
@@ -130,20 +132,25 @@ setMethod(f = "rdcntnorm",
 #' idx for selecting differnetially expressed genes
 #' @export distplot
 setGeneric(name="distplot",
-  def = function(obj, ylab, pdffout) {
+  def = function(obj, ylab, pdffout, probs = 0.85) {
     standardGeneric("distplot")
   }
 )
 
 setMethod(f = "distplot",
   signature = c("tpm", "character", "character"),
-  definition = function(obj, ylab, pdffout) {
+  definition = function(obj, ylab, pdffout, probs) {
     dat <- data.table(obj@tpm.value)
     ldat=melt(dat)
-    max.y=quantile(ldat$value, probs=0.85)
-    p1=ggplot(ldat, aes(x=variable, y=value))+geom_boxplot(aes(fill = factor(variable)))+ scale_y_continuous(labels=comma)+labs(x="",y=ylab)+theme(legend.title=element_blank(), legend.position="top")+coord_cartesian(ylim=c(0,max.y))
-    pdf(pdffout)
-    theme_set(theme_grey(base_size=15))
+    max.y=quantile(ldat$value, probs = probs)
+    p1=ggplot(ldat, aes(x = variable, y = value)) +
+      geom_boxplot(aes(fill = factor(variable))) +
+      scale_y_continuous(labels = comma) +
+      labs(x = "", y = ylab) +
+      theme(legend.title = element_blank(), legend.position="top") +
+      coord_cartesian(ylim=c(0,max.y))
+      pdf(pdffout)
+      theme_set(theme_grey(base_size=15))
     multiplot(p1,cols=1)
     dev.off()
   }
@@ -168,7 +175,9 @@ setMethod(f = "corplot",
     pm2 <- pm
     for(i in 2:pm$nrow) {
       for(j in 1:(i-1)) {
-        pm2[i,j] <- pm[i,j] + coord_cartesian(xlim = c(0,thresh),ylim = c(0,thresh)) + scale_x_continuous(breaks = c(0, as.numeric(thresh))) + scale_y_continuous(breaks = c(0, as.numeric(thresh)))
+        pm2[i,j] <- pm[i,j] + coord_cartesian(xlim = c(0,thresh),ylim = c(0,thresh)) +
+          scale_x_continuous(breaks = c(0, as.numeric(thresh))) +
+          scale_y_continuous(breaks = c(0, as.numeric(thresh)))
       }
     }
     pdf(pdffout)
@@ -194,7 +203,8 @@ setMethod(f = "hireplot",
   grps <- factor(obj@grps,levels=unique(obj@grps),ordered=T)
   tip.col <- brewer.pal(length(levels(grps)), "Dark2")[as.numeric(grps)]
   png(pngfout, width=3000, height=3000, res=300)
-  plot(as.phylo(hclust(as.dist(1-corstats), method = 'average')), cex = 2, label.offset = 0, tip.color = tip.col)
+  plot(as.phylo(hclust(as.dist(1-corstats), method = 'average')),
+    cex = 2, label.offset = 0, tip.color = tip.col)
   dev.off()
 }
 
@@ -218,7 +228,8 @@ setGeneric(name = "heatcorplot",
 setMethod(f = "heatcorplot",
   signature = "tpm",
   definition = function(obj, pngfout) {
-    pm <- ggcorr(ob@tpm.value, method = c("pairwise","spearman"), label = TRUE, label_alpha = TRUE)
+    pm <- ggcorr(ob@tpm.value, method = c("pairwise","spearman"),
+      label = TRUE, label_alpha = TRUE)
     png(pngfout,width=3000,height=3000,res=300)
     print(pm)
     dev.off()
@@ -230,7 +241,8 @@ setMethod(f = "heatcorplot",
 #' @rdname bplot-methods
 #' @export bplot
 setGeneric(name = "bplot",
-  def = function(obj, title, pngfout, maxPcnt = 0.80, ylab = expression(paste(log[2], "(TPM)")),
+  def = function(obj, title, pngfout, maxPcnt = 0.80,
+    ylab = expression(paste(log[2], "(TPM)")),
     isLog = FALSE, small = 0.05) {
     standardGeneric("bplot")
   }
@@ -250,11 +262,11 @@ setMethod(f = "bplot",
   min.y <- min(ldat$value)
   max.y <- as.numeric(quantile(ldat$value, probs = maxPcnt))
   p1 <- ggplot(ldat, aes(x = variable, y = value, fill = levels(ldat$grps)))+
-  geom_boxplot()+
-  coord_cartesian(ylim = c(min.y, max.y))+
-  theme(legend.title = element_blank(), legend.position = "top") +
-  labs(x = "", y = ylab) +
-  ggtitle(title)
+    geom_boxplot()+
+    coord_cartesian(ylim = c(min.y, max.y))+
+    theme(legend.title = element_blank(), legend.position = "top") +
+    labs(x = "", y = ylab) +
+    ggtitle(title)
   png(pngfout, width = 3000, height = 3000,res = 300, pointsize = 14)
   theme_set(theme_grey(base_size = 15))
   multiplot(p1, cols = 1)
@@ -266,7 +278,8 @@ setMethod(f = "bplot",
 #' @rdname PCAplot-methods
 #' @export PCAplot
 setGeneric(name = "PCAplot",
-  def = function(obj, pngfout, fout = NULL, excl.col = NULL, ntop = Inf, isLog = FALSE, small = 0.05) {
+  def = function(obj, pngfout, fout = NULL, excl.col = NULL,
+    ntop = Inf, isLog = FALSE, small = 0.05) {
     standardGeneric("bplot")
   }
 )
@@ -276,7 +289,8 @@ setMethod(f = "PCAplot",
   definition = function(obj, pngfout, fout, excl.col, ntop, isLog, small) {
   out <- function(dat,fout) {
     tmp <- data.frame(gene = rownames(dat), dat)
-    write.table(tmp, file = fout, row.names = F, col.names = T, quote = F, sep = "\t")
+    write.table(tmp, file = fout, row.names = F,
+      col.names = T, quote = F, sep = "\t")
   }
   if (is.null(excl.col)) {
     dat <- as.matrix(obj@tpm.value)
@@ -316,7 +330,10 @@ setMethod(f = "PCAplot",
   addgrids3d(x[, 1:3], grid = c("xy", "xz", "yz"))
   #s3d$points3d(x[, 1:3], pch=16, col=x$colors)
   text(s3d$xyz.convert(x[, 1:3] + 1), labels=1:nrow(x), col=x$colors)
-  legend(par('usr')[1] - 0.5,par('usr')[4] + 0.3, legend = paste0(1:nrow(x), ": ", rownames(x)), pch = 20, col = x$colors, xpd = TRUE, ncol = 3, cex = 0.7)
+  legend(par('usr')[1] - 0.5,par('usr')[4] + 0.3,
+    legend = paste0(1:nrow(x), ": ", rownames(x)),
+    pch = 20, col = x$colors, xpd = TRUE,
+    ncol = 3, cex = 0.7)
   dev.off()
 }
 
@@ -338,7 +355,9 @@ setMethod(f = "MAplot",
     nd <- dd
     nd$nlogpval <- -log10(nd$P.Value)
     ylab <- "P"
-    p1 <- ggplot(nd, aes(x = logFC, y = nlogpval, color = DEG)) + geom_point() + labs(y = bquote(-log[10](.(ylab)))) + theme(legend.title = element_blank(), legend.position = "top")
+    p1 <- ggplot(nd, aes(x = logFC, y = nlogpval, color = DEG)) + geom_point() +
+      labs(y = bquote(-log[10](.(ylab)))) +
+      theme(legend.title = element_blank(), legend.position = "top")
     png(pngfout, width = 3000, height = 3000, res = 300, pointsize = 14)
     theme_set(theme_grey(base_size = 15))
     multiplot(p1, cols = 1)
@@ -360,7 +379,8 @@ setMethod(f = "BICplot",
   signature = c("numeric", "numeric", "character"),
   BICplot = function(g, BIC, pngfout) {
     dd <- data.frame(g = g ,BIC = BIC)
-    p1 <- ggplot(dd, aes(x = g, y = BIC)) + geom_point(colour = "#FF9999")+xlab("Cluster Size")+ylab("BIC")
+    p1 <- ggplot(dd, aes(x = g, y = BIC)) + geom_point(colour = "#FF9999") +
+      xlab("Cluster Size")+ylab("BIC")
     png(pngfout, width = 3000, height = 3000, res = 300, pointsize = 14)
     theme_set(theme_grey(base_size = 15))
     multiplot(p1, cols = 1)
@@ -375,14 +395,19 @@ setMethod(f = "BICplot",
 #' heatmap during or after differential analysis
 #' @export diffHeatmap
 setGeneric(name = "diffHeatmap",
-  def = function(tpm.value, col.idx, row.idx, pdffout, cutreek = NULL, cut.alg, rank.man = FALSE, log.it.already = FALSE, scale.it = TRUE, cluster_columns_par = TRUE, cluster_rows_par = TRUE, show_row_dend_par = FALSE, small = 0.05, ...) {
+  def = function(tpm.value, col.idx, row.idx, pdffout,
+    cutreek = NULL, cut.alg, rank.man = FALSE, log.it.already = FALSE,
+    scale.it = TRUE, cluster_columns_par = TRUE, cluster_rows_par = TRUE,
+    show_row_dend_par = FALSE, small = 0.05, ...) {
     standardGeneric("diffHeatmap")
   }
 )
 
 setMethod(f = "diffHeatmap",
   signature = c("matrix"),
-  definition = function(tpm.value, col.idx, row.idx, pdffout, cutreek, cut.alg, rank.man, log.it.already, scale.it, cluster_columns_par, cluster_rows_par, show_row_dend_par, small, ...) {
+  definition = function(tpm.value, col.idx, row.idx, pdffout, cutreek,
+    cut.alg, rank.man, log.it.already, scale.it, cluster_columns_par,
+    cluster_rows_par, show_row_dend_par, small, ...) {
     cut.alg <- match.arg(cut.alg, c("pam","hclust","emmix"))
     tpm.value <- tpm.value[row.idx, col.idx]
     if (!log.it.already) {
@@ -408,9 +433,20 @@ setMethod(f = "diffHeatmap",
       } else if (cut.alg == "pam") {
         clusters <- pam(norm,cutreek)$clustering
       }
-      pm <- Heatmap(norm, cluster_columns = cluster_columns_par, cluster_rows = cluster_rows_par, show_row_names = FALSE, show_row_dend = show_row_dend_par, show_column_dend = show_column_dend_par, heatmap_legend_param = list(title = "", color_bar = "continuous"), clustering_distance_rows = "spearman", clustering_method_rows = "average", clustering_distance_columns = "spearman", clustering_method_columns = "average", split = paste0("Cluster", clusters))
+      pm <- Heatmap(norm, cluster_columns = cluster_columns_par,
+        cluster_rows = cluster_rows_par, show_row_names = FALSE,
+        show_row_dend = show_row_dend_par, show_column_dend = show_column_dend_par,
+        heatmap_legend_param = list(title = "", color_bar = "continuous"),
+        clustering_distance_rows = "spearman", clustering_method_rows = "average",
+        clustering_distance_columns = "spearman", clustering_method_columns = "average",
+        split = paste0("Cluster", clusters))
     } else {
-      pm <- Heatmap(norm, cluster_columns = cluster_columns_par, cluster_rows = cluster_rows_par, show_row_names = FALSE, show_row_dend = show_row_dend_par, show_column_dend = show_column_dend_par, heatmap_legend_param = list(title="", color_bar="continuous"), clustering_distance_rows = "spearman", clustering_method_rows = "average", clustering_distance_columns = "spearman", clustering_method_columns = "average")
+      pm <- Heatmap(norm, cluster_columns = cluster_columns_par,
+        cluster_rows = cluster_rows_par, show_row_names = FALSE,
+        show_row_dend = show_row_dend_par, show_column_dend = show_column_dend_par,
+        heatmap_legend_param = list(title="", color_bar="continuous"),
+        clustering_distance_rows = "spearman", clustering_method_rows = "average",
+        clustering_distance_columns = "spearman", clustering_method_columns = "average")
     }
     pdf(pdffout)
     draw(pm)
@@ -425,22 +461,36 @@ setMethod(f = "diffHeatmap",
 
 #' @title kHeat
 setGeneric(name = "kHeat",
-  def = function(obj, pdffout, small = 0.05) {
+  def = function(obj, pdffout, log2.it = TRUE, scale.it = TRUE, small = 0.05) {
     standardGeneric("kHeat")
   }
 )
 
 setMethod(f = "kHeat",
   signature = c("tpm", "ANY"),
-  definition = function(obj, pdffout, small) {
-    mat <- log2(as.matrix(obj@mat) + small)
+  definition = function(obj, pdffout, log2.it, scale.it, small) {
+    mat <- obj@tpm.value
+    if (log2.it) {
+      mat <- log2(mat + small)
+    }
+    if (scale.it) {
+      mat <- t(apply(mat, 1, scale))
+    }
     pr_mb <- clusing(mat, pdffout = gsub(".pdf","_optK.pdf", pdffout))
-    ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE, show_row_dend = FALSE, cluster_columns = FALSE, show_column_dend = FALSE, heatmap_legend_param = list(title = "", color_bar = "continuous"), clustering_distance_rows = "spearman", clustering_method_rows = "average", clustering_distance_columns = "spearman", clustering_method_columns = "average", split=factor(pr_mb), gap = unit(3, "mm"))
+    ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
+      show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
+      heatmap_legend_param = list(title = "", color_bar = "continuous"),
+      clustering_distance_rows = "spearman", clustering_method_rows = "average",
+      clustering_distance_columns = "spearman", clustering_method_columns = "average",
+      split=factor(pr_mb), gap = unit(3, "mm"))
     # png(pngfout,width=2500*2,height=2500,res=300)
     pdf(pdffout)
     draw(ht_list)
     dev.off()
-    write.table(data.frame(mat, cluster = pr_mb), file = gsub("pdf", "txt", pdffout), row.names = TRUE, col.names = TRUE, sep = "\t", quote = FALSE)
+    write.table(data.frame(mat, cluster = pr_mb),
+      file = gsub("pdf", "txt", pdffout),
+      row.names = TRUE, col.names = TRUE,
+      sep = "\t", quote = FALSE)
   }
 )
 
@@ -452,7 +502,9 @@ setMethod(f = "kHeat",
 #' filtering of genes must be done before hand
 #' @export limmaDiff
 setGeneric(name = "limmaDiff",
-  def = function(obj, dout, pat, MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE, DiffOut.it = TRUE, logFCthresh = 1, PValtrhesh = 0.05, log2.it = TRUE, small = 0.05) {
+  def = function(obj, dout, pat,
+    MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE, DiffOut.it = TRUE,
+    logFCthresh = 1, PValtrhesh = 0.05, log2.it = TRUE, small = 0.05) {
     standardGeneric("limmaDiff")
   }
 )
