@@ -595,27 +595,28 @@ setGeneric(name = "lineGraph",
 setMethod(f = "lineGraph",
   signature = c("obj"),
   definition = function(obj, col.idx, row.idx, clusters, pdffout, log.it.already, mean.it, small) {
-  tpm.value <- obj@tpm.value[row.idx, col.idx]
-  if (!log.it.already) {
-    tpm.value <- log2(tpm.value + small)
+    tpm.value <- obj@tpm.value[row.idx, col.idx]
+    if (!log.it.already) {
+      tpm.value <- log2(tpm.value + small)
+    }
+    norm <- t(scale(t(tpm.value)))
+    grps <- factor(obj@grps, levels = unique(obj@grps))
+    norm.grp <- t(apply(norm, 1,
+      function(vec)tapply(vec, grps, mean)))
+    if (mean.it) {
+      dat <- data.table(norm.grp, clusters = clusters)
+      dat <- data.table(dat[, lapply(.SD, mean, na.rm = TRUE), by = clusters, .SDcols = levels(grps), id="mean")
+      setcolorder(dat, c(2:(ncol(dat)-1), 1, ncol(dat)))
+    } else {
+      dat <- data.table(norm.grp, clusters=clusters, id=rownames(norm.grp))
+    }
+    ldat <- melt(dat, id.vars = c(1:ncol(dat))[!1:ncol(dat) %in% 1:ncol(norm.grp)])
+    ylab <- "TPM"
+    p1 <- ggplot(data = ldat, aes(x = variable, y = value, group = id, colour = "#FF9999" )) + geom_line() +
+      geom_point() + facet_wrap(~ clusters) + labs(y = bquote(paste("Standardized ", log[2](.(ylab))))) + theme(legend.position="none")
+    pdf(pdffout, pointsize = 14)
+    theme_set(theme_grey(base_size = 15))
+    multiplot(p1, cols = 1)
+    dev.off()
   }
-  norm <- t(scale(t(tpm.value)))
-  grps <- factor(obj@grps, levels = unique(obj@grps))
-  norm.grp <- t(apply(norm, 1,
-    function(vec)tapply(vec, grps, mean)))
-  if (mean.it) {
-    dat <- data.table(norm.grp, clusters = clusters)
-    dat <- data.table(dat[, lapply(.SD, mean, na.rm = TRUE), by = clusters, .SDcols = levels(grps), id="mean")
-    setcolorder(dat, c(2:(ncol(dat)-1), 1, ncol(dat)))
-  } else {
-    dat <- data.table(norm.grp, clusters=clusters, id=rownames(norm.grp))
-  }
-  ldat <- melt(dat, id.vars = c(1:ncol(dat))[!1:ncol(dat) %in% 1:ncol(norm.grp)])
-  ylab <- "TPM"
-  p1 <- ggplot(data = ldat, aes(x = variable, y = value, group = id, colour = "#FF9999" )) + geom_line() +
-    geom_point() + facet_wrap(~ clusters) + labs(y = bquote(paste("Standardized ", log[2](.(ylab))))) + theme(legend.position="none")
-  pdf(pdffout)
-  theme_set(theme_grey(base_size = 15))
-  multiplot(p1, cols = 1)
-  dev.off()
-}
+)
