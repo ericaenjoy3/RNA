@@ -517,7 +517,7 @@ setMethod(f = "kHeat",
     pdf(pdffout)
     draw(ht_list)
     dev.off()
-    write.table(data.frame(mat, cluster = ifelse(is.null(k), factor(pr_mb), row_order(ht_list)),
+    write.table(data.frame(mat, cluster = ifelse(is.null(k), factor(pr_mb), row_order(ht_list))),
       file = gsub("pdf", "txt", pdffout),
       row.names = TRUE, col.names = TRUE,
       sep = "\t", quote = FALSE)
