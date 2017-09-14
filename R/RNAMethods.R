@@ -242,7 +242,7 @@ setMethod(f = "heatcorplot",
 #' @rdname bplot-methods
 #' @export bplot
 setGeneric(name = "bplot",
-  def = function(obj, title, pngfout, maxPcnt = 0.80,
+  def = function(obj, title, pdffout, maxPcnt = 0.80,
     ylab = expression(paste(log[2], "(TPM)")),
     isLog = FALSE, small = 0.05) {
     standardGeneric("bplot")
@@ -251,9 +251,10 @@ setGeneric(name = "bplot",
 
 setMethod(f = "bplot",
   signature = "tpm",
-  definition = function(obj, title, pngfout, maxPcnt, ylab, isLog, small) {
+  definition = function(obj, title, pdffout, maxPcnt, ylab, isLog, small) {
+    tpm.value <- obj@tpm.value
     if(!isLog) {
-      dat <- log2(obj@tpm.value + small)
+      dat <- log2(tpm.value + small)
     }
     map.it <- obj@grps
     names(map.it) <- colnames(tpm.value)
@@ -268,7 +269,7 @@ setMethod(f = "bplot",
       theme(legend.title = element_blank(), legend.position = "top") +
       labs(x = "", y = ylab) +
       ggtitle(title)
-    png(pngfout, width = 3000, height = 3000,res = 300, pointsize = 14)
+    pdf(pdffout, pointsize = 14)
     theme_set(theme_grey(base_size = 15))
     multiplot(p1, cols = 1)
     dev.off()

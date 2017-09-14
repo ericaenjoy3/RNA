@@ -22,15 +22,15 @@ spike.obj <- new("tpm",
   tpm.value = sepSpike(tpm.obj, invert = FALSE),
   grps = tpm.obj@grps)
 
-distplot(spike.obj, grps, ylab="TPM",
+distplot(spike.obj, ylab="TPM",
   pdffout = file.path(dout, "Daf_spikein_distplot.pdf"))
-distplot(gene.obj, grps, ylab="TPM",
+distplot(gene.obj, ylab="TPM",
   pdffout = file.path(dout, "Daf_genes_distplot.pdf"))
-bplot(spike.obj, grps, title="Spike-in",
+bplot(spike.obj, title="Spike-in",
   pdffout = file.path(dout, "Daf_spikein_bplot.pdf"),
   maxPcnt = 0.80, ylab=expression(paste(log[2], "(TPM)")),
   isLog = FALSE, small = 0.05)
-bplot(gene.obj, grps, title = "Genes",
+bplot(gene.obj, title = "Genes",
   pdffout = file.path(dout,"Daf_genes_bplot.pdf"), maxPcnt = 0.80,
   ylab = expression(paste(log[2], "(TPM)")), isLog = FALSE, small = 0.05)
 
