@@ -198,15 +198,16 @@ setGeneric(name = "hireplot",
 
 setMethod(f = "hireplot",
   signature = c("tpm"),
-  definition <- function(obj, pdffout) {
-  corstats <- cor(obj@tpm.value,method="spearman")
-  grps <- factor(obj@grps,levels=unique(obj@grps),ordered=T)
-  tip.col <- brewer.pal(length(levels(grps)), "Dark2")[as.numeric(grps)]
-  png(pngfout, width=3000, height=3000, res=300)
-  plot(as.phylo(hclust(as.dist(1-corstats), method = 'average')),
-    cex = 2, label.offset = 0, tip.color = tip.col)
-  dev.off()
-}
+  definition = function(obj, pdffout) {
+    corstats <- cor(obj@tpm.value,method="spearman")
+    grps <- factor(obj@grps,levels=unique(obj@grps),ordered=T)
+    tip.col <- brewer.pal(length(levels(grps)), "Dark2")[as.numeric(grps)]
+    png(pngfout, width=3000, height=3000, res=300)
+    plot(as.phylo(hclust(as.dist(1-corstats), method = 'average')),
+      cex = 2, label.offset = 0, tip.color = tip.col)
+    dev.off()
+  }
+)
 
 #' @title heatcorplot
 #' @name heatcorplot
