@@ -231,7 +231,7 @@ setMethod(f = "heatcorplot",
   definition = function(obj, pdffout) {
     pm <- ggcorr(ob@tpm.value, method = c("pairwise","spearman"),
       label = TRUE, label_alpha = TRUE)
-    png(pngfout,width=3000,height=3000,res=300)
+    pdf(pdffout)
     print(pm)
     dev.off()
   }
