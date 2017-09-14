@@ -400,7 +400,7 @@ setMethod(f = "BICplot",
 #' @export diffHeatmap
 setGeneric(name = "diffHeatmap",
   def = function(tpm.value, col.idx, row.idx, pdffout,
-    cutreek = NULL, cut.alg, rank.man = FALSE, log.it.already = FALSE,
+    cutreek = NULL, cut.alg = NULL, rank.man = FALSE, log.it.already = FALSE,
     scale.it = TRUE, cluster_columns_par = TRUE, cluster_rows_par = TRUE,
     show_row_dend_par = FALSE, small = 0.05, ...) {
     standardGeneric("diffHeatmap")
@@ -412,7 +412,9 @@ setMethod(f = "diffHeatmap",
   definition = function(tpm.value, col.idx, row.idx, pdffout, cutreek,
     cut.alg, rank.man, log.it.already, scale.it, cluster_columns_par,
     cluster_rows_par, show_row_dend_par, small, ...) {
-    cut.alg <- match.arg(cut.alg, c("pam","hclust","emmix"))
+    if (!is.null(cut.alg)) {
+	cut.alg <- match.arg(cut.alg, c("pam","hclust","emmix"))
+    }
     tpm.value <- tpm.value[row.idx, col.idx]
     if (!log.it.already) {
       tpm.value <- log2(tpm.value+small)
