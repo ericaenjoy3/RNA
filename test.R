@@ -16,10 +16,10 @@ tpm.obj <- new("tpm",
   tpm.value = tpm.value,
   grps = gsub("_\\d", "", colnames(tpm.value)))
 gene.obj <- new("tpm",
-  tpm.value = sepSpike(tpm.obj, invert = FALSE),
+  tpm.value = sepSpike(tpm.obj, invert = TRUE),
   grps = tpm.obj@grps)
 spike.obj <- new("tpm",
-  tpm.value = sepSpike(tpm.obj, invert = TRUE),
+  tpm.value = sepSpike(tpm.obj, invert = FALSE),
   grps = tpm.obj@grps)
 
 distplot(spike.obj, grps, ylab="TPM",
