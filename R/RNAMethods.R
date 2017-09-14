@@ -465,6 +465,28 @@ setMethod(f = "diffHeatmap",
   }
 )
 
+#' @title clusing
+setGeneric(name="clusing",
+  def=function(dat, pdffout) {
+    standardGeneric("clusing")
+  }
+)
+
+setMethod(f = "clusing",
+  signature=c(dat = "data.frame", pdffout="character"),
+  definition=function(dat, pdffout){
+    if(!is.null(dirname(pdffout)) || dirname(pdffout)==".") dir.create(dirname(pdffout), showWarnings = FALSE)
+    pdf(pdffout)
+    opt <- Optimal_Clusters_KM(dat, max_clusters = min(10,ncol(dat)), plot_clusters=TRUE, criterion = 'distortion_fK', fK_threshold = 0.85, initializer= 'optimal_init', tol_optimal_init = 0.2)
+    dev.off()
+    km_mb <- MiniBatchKmeans(dat, clusters = opt, batch_size = 20, num_init = 5, max_iters = 100,
+    init_fraction = 0.2, initializer = 'kmeans++', early_stop_iter = 10,verbose = F)
+    pr_mb <- predict_MBatchKMeans(dat, km_mb$centroids)
+    return(pr_mb)
+  }
+)
+
+
 #' @title kHeat
 setGeneric(name = "kHeat",
   def = function(obj, pdffout, log2.it = TRUE, scale.it = TRUE, small = 0.05) {
