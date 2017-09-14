@@ -12,7 +12,7 @@ setGeneric(name = 'sepSpike',
 setMethod(f = "sepSpike",
   signature = c("tpm", "logical"),
   def = function(obj, invert) {
-    tpm.value <- obj@tpm.value[grep("spike", rownames(obj@tpm.value), ingore.case = TRUE, invert),]
+    tpm.value <- obj@tpm.value[grep("spike", rownames(obj@tpm.value), ignore.case = TRUE, invert),]
     return(tpm.value)
   }
 )
