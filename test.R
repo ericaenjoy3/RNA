@@ -55,12 +55,16 @@ dat <- limmaDiff(genefilter.obj, dout, pat = "Daf",
 
 # differential expressed genes and also in genevar.obj -------------------------
 ridx <- apply(dat[,grep("DEG", colnames(dat))], 1 , 
-  function(vec)any(vec!='NDiff'))
+  function(vec)any(vec != 'NDiff'))
 com.obj <- new("tpm", 
   tpm.value = genefilter.obj@tpm.value[rownames(dat)[ridx] %in% rownames(genevar.obj@tpm.value), ],
   grps = genefilter.obj@grps)
-  
+ridx <- dat[, "DEG_ESC.MEF"] != 'NDiff' & apply(dat[, grep("^ESC", colnames(dat))], 1, function(vec)any(vec>10))
+esc.obj <- new("tpm",   
+  tpm.value = genefilter.obj@tpm.value[ridx, ],
+  grps = genefilter.obj@grps)
+
 
 # differential expressed genes between ESC and MEF------------------------------
-mat = structure(list(dat[ridx, cidx]), row.names=paste(dat$gid, dat$gname, dat$gtype, sep="|")[ridx], class="data.frame")
-kHeat(mat, pdffout="Daf_kHeat.pdf")
+kHeat(com.obj, pdffout = file.path(dout, "Daf_comDiff_kHeat.pdf"), k = 9)
+kHeat(esc.obj, pdffout = file.path(dout, "Daf_escDiff_kHeat.pdf"), k = 5)
