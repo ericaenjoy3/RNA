@@ -2,8 +2,7 @@
 
 libs <- c("data.table", "limma", "affy", "ggplot2", "scatterplot3d",
   "RColorBrewer", "grDevices", "scales", "GGally", "GOtest", "ape",
-  "pheatmap", "ComplexHeatmap", "circlize", "multiploti", "addgrids3d"
-  "ModClusterR")
+  "pheatmap", "ComplexHeatmap", "circlize", "multiplot", "addgrids3d")
 sapply(libs, library, character.only = TRUE, quietly = TRUE)
 
 fin <- file.path(
@@ -48,7 +47,7 @@ PCAplot(gene.obj,
   pdffout = file.path(dout,"Daf_PCAplot.png"),
   fout = NULL, excl.col = NULL, ntop = Inf, isLog = FALSE, small = 0.05)
 
-genefilter.obj <- rmLow(gene.obj, thresh = 10)
+genefilter.obj <- rmLow(gene.obj, thresh = 1)
 genevar.obj <- rmNonVar(genefilter.obj, probs = 0.1)
 dat <- limmaDiff(genefilter.obj, dout, pat = "Daf",
   MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE, DiffOut.it = TRUE,
@@ -57,8 +56,11 @@ dat <- limmaDiff(genefilter.obj, dout, pat = "Daf",
 # differential expressed genes and also in genevar.obj -------------------------
 ridx <- apply(dat[,grep("DEG", colnames(dat))], 1 , 
   function(vec)any(vec!='NDiff'))
-com.obj <- new("tpm", tpm.value = genefilter.obj@tpm.value[rownames(dat)[ridx] %in% rownames(genevar.obj@tpm.value), ],
+com.obj <- new("tpm", 
+  tpm.value = genefilter.obj@tpm.value[rownames(dat)[ridx] %in% rownames(genevar.obj@tpm.value), ],
   grps = genefilter.obj@grps)
+  
 
 # differential expressed genes between ESC and MEF------------------------------
-kHeat(com.obj, pdffout = file.path(dout, "Daf_comDiff_kHeat.pdf"))
+mat = structure(list(dat[ridx, cidx]), row.names=paste(dat$gid, dat$gname, dat$gtype, sep="|")[ridx], class="data.frame")
+kHeat(mat, pdffout="Daf_kHeat.pdf")

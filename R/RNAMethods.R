@@ -504,7 +504,7 @@ setMethod(f = "kHeat",
     if (scale.it) {
       mat <- t(apply(mat, 1, scale))
     }
-    pr_mb <- clusing(mat, pdffout = gsub(".pdf","_optK.pdf", pdffout))
+    pr_mb <- clusing(data.frame(mat), pdffout = gsub(".pdf","_optK.pdf", pdffout))
     ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
       show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
       heatmap_legend_param = list(title = "", color_bar = "continuous"),
