@@ -51,7 +51,7 @@ setGeneric(name = "rmNonVar",
 
 setMethod(f = "rmNonVar",
   signature = c("tpm", "numeric"),
-  def = funciton(obj, probs) {
+  definition = function(obj, probs) {
     var <- apply(obj@tpm.value, 1, var)
     thresh <- quantile(var, probs = probs, names = FALSE)
     kpt.idx <- var >= thresh
