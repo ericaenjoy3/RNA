@@ -520,7 +520,6 @@ setMethod(f = "kHeat",
           clustering_distance_columns = "spearman", clustering_method_columns = "average",
           km = k, gap = unit(3, "mm"))
     }
-    browser()
     # png(pngfout,width=2500*2,height=2500,res=300)
     pdf(pdffout)
     draw(ht_list)
