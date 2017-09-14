@@ -254,8 +254,9 @@ setMethod(f = "bplot",
   definition = function(obj, title, pdffout, maxPcnt, ylab, isLog, small) {
     tpm.value <- obj@tpm.value
     if(!isLog) {
-      dat <- log2(tpm.value + small)
+      tpm.value <- log2(tpm.value + small)
     }
+    browser()
     map.it <- obj@grps
     names(map.it) <- colnames(tpm.value)
     ldat <- melt(data.table(tpm.value))
@@ -263,7 +264,7 @@ setMethod(f = "bplot",
     levels(ldat$grps) <- obj@grps
     min.y <- min(ldat$value)
     max.y <- as.numeric(quantile(ldat$value, probs = maxPcnt))
-    p1 <- ggplot(ldat, aes(x = variable, y = value, fill = levels(ldat$grps)))+
+    p1 <- ggplot(ldat, aes(x = variable, y = value, fill = ldat$grps))+
       geom_boxplot()+
       coord_cartesian(ylim = c(min.y, max.y))+
       theme(legend.title = element_blank(), legend.position = "top") +
