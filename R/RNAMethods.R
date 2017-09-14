@@ -515,69 +515,70 @@ setGeneric(name = "limmaDiff",
 setMethod(f = "limmaDiff",
   signature = c("tpm"),
   definition = function(obj, dout, pat, MA.it, HEAT.it, GO.it, DiffOut.it, logFCthresh, PValtrhesh, log2.it, small) {
-  stopifnot(all(obj@tpm.value>=0))
-  grps <- factor(obj@grps)
-  if (log2.it) {
-    tpm.value <- log2(obj@tpm.value + small)
-  } else {
-    tpm.value <- obj@tpm.value
+    stopifnot(all(obj@tpm.value>=0))
+    grps <- factor(obj@grps)
+    if (log2.it) {
+      tpm.value <- log2(obj@tpm.value + small)
+    } else {
+      tpm.value <- obj@tpm.value
+    }
+    contrast <- apply(combn(levels(grps), 2), 2,paste0,collapse="-")
+    design <- model.matrix(~ 0 + grps)
+    colnames(design) <- sub('^grps', '', colnames(design))
+    fit <- lmFit(tpm.value, design)
+    contrast.matrix <- makeContrasts(contrasts = contrast, levels = design)
+    fit <- contrasts.fit(fit, contrast.matrix)
+    fit <- eBayes(fit)
+    dat.list <- lapply(contrast,function(coef){
+      dd <- topTable(fit, adjust = "BH", number = Inf, coef = coef, sort = 'none')
+      dd <- dd[,c("logFC","P.Value","adj.P.Val")]
+      query.population <- gsub(
+        "[^\\|]+\\|([^\\|]+)\\|[^\\|]+(\\|[^\\|]+){0,1}",
+        "\\1", rownames(dd))
+      up.idx <- which(dd[,"logFC"] >= logFCthresh & dd[,"P.Value"] <= PValtrhesh)
+      down.idx <- which(dd[,"logFC"] <= (-logFCthresh) & dd[,"P.Value"] <= PValtrhesh)
+      if (length(up.idx) > 0 || length(down.idx) > 0) {
+        dd$DEG <- "NDiff"
+        dd[up.idx, "DEG"] <- "Up"
+        dd[down.idx, "DEG"] <- "Down"
+        if (MA.it) {
+          MAplot(dd, pdffout = file.path(dout, paste0(pat, "_", coef, "_MA.png")))
+        }
+        if (HEAT.it) {
+          sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", coef)
+          sm2 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\2", coef)
+          diffHeatmap(tpm.value, col.idx = c(grep(sm1, as.character(grps)), grep(sm2, as.character(grps))),
+            row.idx = which(dd$DEG != "NDiff"), pngfout = file.path(dout, paste0(pat, "_", coef, "_diffHeatmap.png")),
+            cutreek = NULL, log.it.already = log2.it)
+        }
+        if (GO.it) {
+          DEG <- data.frame(gene = query.population[c(up.idx, down.idx)],
+            group = dd$DEG[c(up.idx, down.idx)], stringsAsFactors = FALSE)
+          Res <- msigdb.gsea(DEG, query.population = query.population, background = 'query',
+            genesets = c('C2.CP','C5.BP','C5.CC','C5.MF'), name.x='DEGs', name.go='MSigDB', species='mouse')
+          write.table(Res, file = file.path(dout, paste0(pat, "_", coef, "_GO.xls")), row.names = FALSE,
+            col.names = TRUE, quote = FALSE, sep = "\t")
+        }
+      };
+      colnames(dd) <- paste(colnames(dd), coef, sep="_")
+      return(dd)
+    })
+    dat <- do.call("cbind",dat.list)
+    rownames(dat) <- rownames(tpm.value)
+    gid <- gsub("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)(\\|[^\\|]+){0,1}",
+      "\\1", rownames(dat))
+    gname <- gsub("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)(\\|[^\\|]+){0,1}",
+      "\\2", rownames(dat))
+    gtype <- gsub("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)(\\|[^\\|]+){0,1}",
+      "\\3", rownames(dat))
+    dat <- data.frame(gid = gid, gname = gname, gtype = gtype, dat, obj@tpm.value)
+    if (DiffOut.it) {
+      write.table(dat, file = file.path(dout, paste0(pat, "_DiffAna.xls")),
+        row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")
+    }
+    return(dat)
   }
-  contrast <- apply(combn(levels(grps), 2), 2,paste0,collapse="-")
-  design <- model.matrix(~ 0 + grps)
-  colnames(design) <- sub('^grps', '', colnames(design))
-  fit <- lmFit(tpm.value, design)
-  contrast.matrix <- makeContrasts(contrasts = contrast, levels = design)
-  fit <- contrasts.fit(fit, contrast.matrix)
-  fit <- eBayes(fit)
-  dat.list <- lapply(contrast,function(coef){
-    dd <- topTable(fit, adjust = "BH", number = Inf, coef = coef, sort = 'none')
-    dd <- dd[,c("logFC","P.Value","adj.P.Val")]
-    query.population <- gsub(
-      "[^\\|]+\\|([^\\|]+)\\|[^\\|]+(\\|[^\\|]+){0,1}",
-      "\\1", rownames(dd))
-    up.idx <- which(dd[,"logFC"] >= logFCthresh & dd[,"P.Value"] <= PValtrhesh)
-    down.idx <- which(dd[,"logFC"] <= (-logFCthresh) & dd[,"P.Value"] <= PValtrhesh)
-    if (length(up.idx) > 0 || length(down.idx) > 0) {
-      dd$DEG <- "NDiff"
-      dd[up.idx, "DEG"] <- "Up"
-      dd[down.idx, "DEG"] <- "Down"
-      if (MA.it) {
-        MAplot(dd, pdffout = file.path(dout, paste0(pat, "_", coef, "_MA.png")))
-      }
-      if (HEAT.it) {
-        sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", coef)
-        sm2 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\2", coef)
-        diffHeatmap(tpm.value, col.idx = c(grep(sm1, as.character(grps)), grep(sm2, as.character(grps))),
-          row.idx = which(dd$DEG != "NDiff"), pngfout = file.path(dout, paste0(pat, "_", coef, "_diffHeatmap.png")),
-          cutreek = NULL, log.it.already = log2.it)
-      }
-      if (GO.it) {
-        DEG <- data.frame(gene = query.population[c(up.idx, down.idx)],
-          group = dd$DEG[c(up.idx, down.idx)], stringsAsFactors = FALSE)
-        Res <- msigdb.gsea(DEG, query.population = query.population, background = 'query',
-          genesets = c('C2.CP','C5.BP','C5.CC','C5.MF'), name.x='DEGs', name.go='MSigDB', species='mouse')
-        write.table(Res, file = file.path(dout, paste0(pat, "_", coef, "_GO.xls")), row.names = FALSE,
-          col.names = TRUE, quote = FALSE, sep = "\t")
-      }
-    };
-    colnames(dd) <- paste(colnames(dd), coef, sep="_")
-    return(dd)
-  })
-  dat <- do.call("cbind",dat.list)
-  rownames(dat) <- rownames(tpm.value)
-  gid <- gsub("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)(\\|[^\\|]+){0,1}",
-    "\\1", rownames(dat))
-  gname <- gsub("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)(\\|[^\\|]+){0,1}",
-    "\\2", rownames(dat))
-  gtype <- gsub("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)(\\|[^\\|]+){0,1}",
-    "\\3", rownames(dat))
-  dat <- data.frame(gid = gid, gname = gname, gtype = gtype, dat, obj@tpm.value)
-  if (DiffOut.it) {
-    write.table(dat, file = file.path(dout, paste0(pat, "_DiffAna.xls")),
-      row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")
-  }
-  return(dat)
-}
+)
 
 #' @title lineGraph
 #' @name lineGraph
