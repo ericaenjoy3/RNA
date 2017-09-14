@@ -280,64 +280,65 @@ setMethod(f = "bplot",
 #' @rdname PCAplot-methods
 #' @export PCAplot
 setGeneric(name = "PCAplot",
-  def = function(obj, pngfout, fout = NULL, excl.col = NULL,
+  def = function(obj, pdffout, fout = NULL, excl.col = NULL,
     ntop = Inf, isLog = FALSE, small = 0.05) {
-    standardGeneric("bplot")
+    standardGeneric("PCAplot")
   }
 )
 
 setMethod(f = "PCAplot",
   signature = "tpm",
-  definition = function(obj, pngfout, fout, excl.col, ntop, isLog, small) {
-  out <- function(dat,fout) {
-    tmp <- data.frame(gene = rownames(dat), dat)
-    write.table(tmp, file = fout, row.names = F,
-      col.names = T, quote = F, sep = "\t")
+  definition = function(obj, pdffout, fout, excl.col, ntop, isLog, small) {
+    out <- function(dat,fout) {
+      tmp <- data.frame(gene = rownames(dat), dat)
+      write.table(tmp, file = fout, row.names = F,
+        col.names = T, quote = F, sep = "\t")
+    }
+    if (is.null(excl.col)) {
+      dat <- as.matrix(obj@tpm.value)
+    } else {
+      dat <- as.matrix(obj@tpm.value[, -excl.col])
+    }
+    if(ncol(dat) <= 3) {
+      stop('The number of samples must be larger than 3\n')
+    }  
+    ridx <- apply(dat, 1, function(vec)any(vec > 0))
+    stopifnot(any(ridx))
+    dat <- dat[ridx,]
+    if(!isLog) {
+      dat <- log2(dat + small)
+    }  
+    dat <- dat[apply(dat, 1, var) > 0, ]
+    if (ntop < nrow(dat)){
+       vars <- apply(dat, 1, var)
+       dat <- dat[order(vars, decreasing = TRUE), ]
+       dat <- dat[1:ntop, ]
+    }
+    pca <- prcomp(t(dat), center=TRUE, scale=TRUE, retx=TRUE)
+    ve <- pca$sdev^2/sum(pca$sdev^2) #variance explained by each PC
+    ve13 <- sprintf("%.1f",ve[1:3]*100)
+    x <- data.frame(PC1 = pca$x[,1], PC2 = pca$x[,2], PC3 = pca$x[,3])
+    rownames(x) <- colnames(dat)
+    if (!is.infinite(ntop)) {
+      out(dat, fout)
+    }  
+    uniq.cols <- rainbow(length(unique(obj@grps)))
+    cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(grps), ordered = TRUE))]
+    x$colors <- cols
+    pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
+    pdf(pdffout, pointsize = 14)
+    par(mar = c(1, 1, 1, 1))
+    s3d <- scatterplot3d(x[ , 1:3], grid = FALSE, box = FALSE, mar = c(3, 3, 2, 2), pch = "")
+    addgrids3d(x[, 1:3], grid = c("xy", "xz", "yz"))
+    #s3d$points3d(x[, 1:3], pch=16, col=x$colors)
+    text(s3d$xyz.convert(x[, 1:3] + 1), labels=1:nrow(x), col=x$colors)
+    legend(par('usr')[1] - 0.5,par('usr')[4] + 0.3,
+      legend = paste0(1:nrow(x), ": ", rownames(x)),
+      pch = 20, col = x$colors, xpd = TRUE,
+      ncol = 3, cex = 0.7)
+    dev.off()
   }
-  if (is.null(excl.col)) {
-    dat <- as.matrix(obj@tpm.value)
-  } else {
-    dat <- as.matrix(obj@tpm.value[, -excl.col])
-  }
-  if(ncol(dat) <= 3) {
-    stop('The number of samples must be larger than 3\n')
-  }
-  ridx <- apply(dat, 1, function(vec)any(vec > 0))
-  stopifnot(any(ridx))
-  dat <- dat[ridx,]
-  if(!isLog) {
-    dat <- log2(dat + small)
-  }
-  dat <- dat[apply(dat, 1, var) > 0, ]
-  if (ntop < nrow(dat)){
-     vars <- apply(dat, 1, var)
-     dat <- dat[order(vars, decreasing = TRUE), ]
-     dat <- dat[1:ntop, ]
-  }
-  pca <- prcomp(t(dat), center=TRUE, scale=TRUE, retx=TRUE)
-  ve <- pca$sdev^2/sum(pca$sdev^2) #variance explained by each PC
-  ve13 <- sprintf("%.1f",ve[1:3]*100)
-  x <- data.frame(PC1 = pca$x[,1], PC2 = pca$x[,2], PC3 = pca$x[,3])
-  rownames(x) <- colnames(dat)
-  if (!is.infinite(ntop)) {
-    out(dat, fout)
-  }
-  uniq.cols <- rainbow(length(unique(obj@grps)))
-  cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(grps), ordered = TRUE))]
-  x$colors <- cols
-  pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
-  png(pngfout, width = 3000, height = 3000, res = 300, pointsize = 14)
-  par(mar = c(1, 1, 1, 1))
-  s3d <- scatterplot3d(x[ , 1:3], grid = FALSE, box = FALSE, mar = c(3, 3, 2, 2), pch = "")
-  addgrids3d(x[, 1:3], grid = c("xy", "xz", "yz"))
-  #s3d$points3d(x[, 1:3], pch=16, col=x$colors)
-  text(s3d$xyz.convert(x[, 1:3] + 1), labels=1:nrow(x), col=x$colors)
-  legend(par('usr')[1] - 0.5,par('usr')[4] + 0.3,
-    legend = paste0(1:nrow(x), ": ", rownames(x)),
-    pch = 20, col = x$colors, xpd = TRUE,
-    ncol = 3, cex = 0.7)
-  dev.off()
-}
+)
 
 #' @title MAplot
 #' @name MAplot
@@ -347,7 +348,7 @@ setMethod(f = "PCAplot",
 #' @export MAplot
 setGeneric(name = "MAplot",
   def = function(dd, pngfout) {
-    standardGeneric("bplot")
+    standardGeneric("MAplot")
   }
 )
 
@@ -372,18 +373,18 @@ setMethod(f = "MAplot",
 #' @rdname BICplot-methods
 #' @export BICplot
 setGeneric(name = "BICplot",
-  def = function(g, BIC, pngfout) {
+  def = function(g, BIC, pdffout) {
     standardGeneric("BICplot")
   }
 )
 
 setMethod(f = "BICplot",
   signature = c("numeric", "numeric", "character"),
-  BICplot = function(g, BIC, pngfout) {
+  definition = function(g, BIC, pdffout) {
     dd <- data.frame(g = g ,BIC = BIC)
     p1 <- ggplot(dd, aes(x = g, y = BIC)) + geom_point(colour = "#FF9999") +
       xlab("Cluster Size")+ylab("BIC")
-    png(pngfout, width = 3000, height = 3000, res = 300, pointsize = 14)
+    pdf(pdffout, pointsize = 14)
     theme_set(theme_grey(base_size = 15))
     multiplot(p1, cols = 1)
     dev.off()
@@ -450,7 +451,7 @@ setMethod(f = "diffHeatmap",
         clustering_distance_rows = "spearman", clustering_method_rows = "average",
         clustering_distance_columns = "spearman", clustering_method_columns = "average")
     }
-    pdf(pdffout)
+    pdf(pdffout, pointsize = 14)
     draw(pm)
     dev.off()
     if (exists("clusters")) {
