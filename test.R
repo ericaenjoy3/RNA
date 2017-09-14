@@ -14,7 +14,7 @@ tpm.value <- SepTPMCnt(fin)$tpm
 
 tpm.obj <- new("tpm",
   tpm.value = tpm.value,
-  grps=gsub("_\\d","",colnames(tpm)))
+  grps = gsub("_\\d", "", colnames(tpm.value)))
 gene.obj <- new("tpm",
   tpm.value = sepSpike(tpm.obj, invert = FALSE),
   grps = tpm.obj@grps)

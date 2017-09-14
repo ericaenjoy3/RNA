@@ -14,5 +14,5 @@ SepTPMCnt <- function(fin) {
   grps <- gsub("(.+?)[_-]*[^-_]+$", "\\1", colnames(tpm))
   tpm.grp <- t(apply(tpm, 1, function(vec)tapply(vec, factor(grps, levels <- unique(grps)), mean)
   ))
-  return(list(tpm <- tpm, cnt <- cnt, rpm <- rpm, tpm.grp <- tpm.grp))
+  return(list(tpm = tpm, cnt = cnt, rpm = rpm, tpm.grp = tpm.grp))
 }
