@@ -362,7 +362,7 @@ setMethod(f = "MAplot",
     p1 <- ggplot(nd, aes(x = logFC, y = nlogpval, color = DEG)) + geom_point() +
       labs(y = bquote(-log[10](.(ylab)))) +
       theme(legend.title = element_blank(), legend.position = "top")
-    png(pngfout, width = 3000, height = 3000, res = 300, pointsize = 14)
+    pdf(pdffout, pointsize = 14)
     theme_set(theme_grey(base_size = 15))
     multiplot(p1, cols = 1)
     dev.off()
