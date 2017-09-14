@@ -229,7 +229,7 @@ setGeneric(name = "heatcorplot",
 setMethod(f = "heatcorplot",
   signature = "tpm",
   definition = function(obj, pdffout) {
-    pm <- ggcorr(ob@tpm.value, method = c("pairwise","spearman"),
+    pm <- ggcorr(obj@tpm.value, method = c("pairwise","spearman"),
       label = TRUE, label_alpha = TRUE)
     pdf(pdffout)
     print(pm)
