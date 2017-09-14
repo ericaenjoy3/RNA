@@ -601,8 +601,7 @@ setMethod(f = "lineGraph",
     }
     norm <- t(scale(t(tpm.value)))
     grps <- factor(obj@grps, levels = unique(obj@grps))
-    norm.grp <- t(apply(norm, 1,
-      function(vec)tapply(vec, grps, mean)))
+    norm.grp <- t(apply(norm, 1, function(vec)tapply(vec, grps, mean)))
     if (mean.it) {
       dat <- data.table(norm.grp, clusters = clusters)
       dat <- data.table(dat[, lapply(.SD, mean, na.rm = TRUE), by = clusters, .SDcols = levels(grps), id="mean")
