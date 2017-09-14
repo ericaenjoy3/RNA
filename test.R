@@ -35,15 +35,15 @@ bplot(gene.obj, title = "Genes",
   ylab = expression(paste(log[2], "(TPM)")), 
   isLog = FALSE, small = 0.05)
 
-distplot(gene.obj, grps, ylab = "TPM",
+distplot(gene.obj, ylab = "TPM",
   pdffout=file.path(dout, "Daf_distplot.pdf"))
-corplot(gene.obj, grps,
+corplot(gene.obj,
   pdffout = file.path(dout, "Daf_corplot.pdf"))
-hireplot(gene.obj, grps,
+hireplot(gene.obj,
   pdffout = file.path(dout, "Daf_hireplot.pdf"))
-heatcorplot(gene.obj, grps,
+heatcorplot(gene.obj,
   pdffout = file.path(dout, "Daf_heatcorplot.pdf"))
-PCAplot(gene.obj, grps,
+PCAplot(gene.obj,
   pdffout = file.path(dout,"Daf_PCAplot.png"),
   fout = NULL, excl.col = NULL, ntop = Inf, isLog = FALSE, small = 0.05)
 

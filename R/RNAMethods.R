@@ -171,7 +171,7 @@ setMethod(f = "corplot",
   definition = function(obj, pdffout) {
     tpm.value <- obj@tpm.value
     thresh <- floor(quantile(as.matrix(tpm.value), probs = 0.999))
-    pm <- ggpairs(tpm.value)
+    pm <- ggpairs(data.table(tpm.value))
     pm2 <- pm
     for(i in 2:pm$nrow) {
       for(j in 1:(i-1)) {
@@ -202,7 +202,7 @@ setMethod(f = "hireplot",
     corstats <- cor(obj@tpm.value,method="spearman")
     grps <- factor(obj@grps,levels=unique(obj@grps),ordered=T)
     tip.col <- brewer.pal(length(levels(grps)), "Dark2")[as.numeric(grps)]
-    png(pngfout, width=3000, height=3000, res=300)
+    pdf(pdffout)
     plot(as.phylo(hclust(as.dist(1-corstats), method = 'average')),
       cex = 2, label.offset = 0, tip.color = tip.col)
     dev.off()
