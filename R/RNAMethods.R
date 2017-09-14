@@ -489,14 +489,14 @@ setMethod(f = "clusing",
 
 #' @title kHeat
 setGeneric(name = "kHeat",
-  def = function(obj, pdffout, log2.it = TRUE, scale.it = TRUE, small = 0.05) {
+  def = function(obj, pdffout, k = NULL, log2.it = TRUE, scale.it = TRUE, small = 0.05) {
     standardGeneric("kHeat")
   }
 )
 
 setMethod(f = "kHeat",
   signature = c("tpm", "ANY"),
-  definition = function(obj, pdffout, log2.it, scale.it, small) {
+  definition = function(obj, pdffout, k, log2.it, scale.it, small) {
     mat <- obj@tpm.value
     if (log2.it) {
       mat <- log2(mat + small)
@@ -504,18 +504,20 @@ setMethod(f = "kHeat",
     if (scale.it) {
       mat <- t(apply(mat, 1, scale))
     }
-    pr_mb <- clusing(data.frame(mat), pdffout = gsub(".pdf","_optK.pdf", pdffout))
+    if (is.null(k)) {
+	pr_mb <- clusing(data.frame(mat), pdffout = gsub(".pdf","_optK.pdf", pdffout))
+    }
     ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
       show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
       heatmap_legend_param = list(title = "", color_bar = "continuous"),
       clustering_distance_rows = "spearman", clustering_method_rows = "average",
       clustering_distance_columns = "spearman", clustering_method_columns = "average",
-      split=factor(pr_mb), gap = unit(3, "mm"))
+      split=ifelse(is.null(k), factor(pr_mb), k), gap = unit(3, "mm"))
     # png(pngfout,width=2500*2,height=2500,res=300)
     pdf(pdffout)
     draw(ht_list)
     dev.off()
-    write.table(data.frame(mat, cluster = factor(pr_mb)),
+    write.table(data.frame(mat, cluster = ifelse(is.null(k), factor(pr_mb), row_order(ht_list)),
       file = gsub("pdf", "txt", pdffout),
       row.names = TRUE, col.names = TRUE,
       sep = "\t", quote = FALSE)
