@@ -252,27 +252,28 @@ setGeneric(name = "bplot",
 setMethod(f = "bplot",
   signature = "tpm",
   definition = function(obj, title, pngfout, maxPcnt, ylab, isLog, small) {
-  if(!isLog) {
-    dat <- log2(obj@tpm.value + small)
+    if(!isLog) {
+      dat <- log2(obj@tpm.value + small)
+    }
+    map.it <- obj@grps
+    names(map.it) <- colnames(tpm.value)
+    ldat <- melt(data.table(tpm.value))
+    ldat$grps <- factor(ldat$variable, levels = colnames(tpm.value))
+    levels(ldat$grps) <- obj@grps
+    min.y <- min(ldat$value)
+    max.y <- as.numeric(quantile(ldat$value, probs = maxPcnt))
+    p1 <- ggplot(ldat, aes(x = variable, y = value, fill = levels(ldat$grps)))+
+      geom_boxplot()+
+      coord_cartesian(ylim = c(min.y, max.y))+
+      theme(legend.title = element_blank(), legend.position = "top") +
+      labs(x = "", y = ylab) +
+      ggtitle(title)
+    png(pngfout, width = 3000, height = 3000,res = 300, pointsize = 14)
+    theme_set(theme_grey(base_size = 15))
+    multiplot(p1, cols = 1)
+    dev.off()
   }
-  map.it <- obj@grps
-  names(map.it) <- colnames(tpm.value)
-  ldat <- melt(data.table(tpm.value))
-  ldat$grps <- factor(ldat$variable, levels = colnames(tpm.value))
-  levels(ldat$grps) <- obj@grps
-  min.y <- min(ldat$value)
-  max.y <- as.numeric(quantile(ldat$value, probs = maxPcnt))
-  p1 <- ggplot(ldat, aes(x = variable, y = value, fill = levels(ldat$grps)))+
-    geom_boxplot()+
-    coord_cartesian(ylim = c(min.y, max.y))+
-    theme(legend.title = element_blank(), legend.position = "top") +
-    labs(x = "", y = ylab) +
-    ggtitle(title)
-  png(pngfout, width = 3000, height = 3000,res = 300, pointsize = 14)
-  theme_set(theme_grey(base_size = 15))
-  multiplot(p1, cols = 1)
-  dev.off()
-}
+)
 
 #' @title PCAplot
 #' @name PCAplot
