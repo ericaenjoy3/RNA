@@ -402,7 +402,7 @@ setGeneric(name = "diffHeatmap",
   def = function(tpm.value, col.idx, row.idx, pdffout,
     cutreek = NULL, cut.alg = NULL, rank.man = FALSE, log.it.already = FALSE,
     scale.it = TRUE, cluster_columns_par = TRUE, cluster_rows_par = TRUE,
-    show_row_dend_par = FALSE, small = 0.05, ...) {
+    show_column_dend_par = TRUE, show_row_dend_par = FALSE, small = 0.05, ...) {
     standardGeneric("diffHeatmap")
   }
 )
@@ -411,7 +411,7 @@ setMethod(f = "diffHeatmap",
   signature = c("matrix"),
   definition = function(tpm.value, col.idx, row.idx, pdffout, cutreek,
     cut.alg, rank.man, log.it.already, scale.it, cluster_columns_par,
-    cluster_rows_par, show_row_dend_par, small, ...) {
+    cluster_rows_par, show_column_dend_par, show_row_dend_par, small, ...) {
     if (!is.null(cut.alg)) {
 	cut.alg <- match.arg(cut.alg, c("pam","hclust","emmix"))
     }
