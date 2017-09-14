@@ -551,7 +551,7 @@ setMethod(f = "limmaDiff",
           sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", coef)
           sm2 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\2", coef)
           diffHeatmap(tpm.value, col.idx = c(grep(sm1, as.character(grps)), grep(sm2, as.character(grps))),
-            row.idx = which(dd$DEG != "NDiff"), pngfout = file.path(dout, paste0(pat, "_", coef, "_diffHeatmap.png")),
+            row.idx = which(dd$DEG != "NDiff"), pdffout = file.path(dout, paste0(pat, "_", coef, "_diffHeatmap.pdf")),
             cutreek = NULL, log.it.already = log2.it)
         }
         if (GO.it) {
