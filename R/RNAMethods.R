@@ -256,7 +256,6 @@ setMethod(f = "bplot",
     if(!isLog) {
       tpm.value <- log2(tpm.value + small)
     }
-    browser()
     map.it <- obj@grps
     names(map.it) <- colnames(tpm.value)
     ldat <- melt(data.table(tpm.value))

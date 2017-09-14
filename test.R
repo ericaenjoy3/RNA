@@ -32,7 +32,8 @@ bplot(spike.obj, title="Spike-in",
   isLog = FALSE, small = 0.05)
 bplot(gene.obj, title = "Genes",
   pdffout = file.path(dout,"Daf_genes_bplot.pdf"), maxPcnt = 0.80,
-  ylab = expression(paste(log[2], "(TPM)")), isLog = FALSE, small = 0.05)
+  ylab = expression(paste(log[2], "(TPM)")), 
+  isLog = FALSE, small = 0.05)
 
 distplot(gene.obj, grps, ylab = "TPM",
   pdffout=file.path(dout, "Daf_distplot.pdf"))
