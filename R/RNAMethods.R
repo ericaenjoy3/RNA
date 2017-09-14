@@ -28,7 +28,7 @@ setGeneric(name = "rmLow",
 )
 
 setMethod(f = "rmLow",
-  signature = c("tpm", "numeric")
+  signature = c("tpm", "numeric"),
   definition = function(obj, thresh) {
     kpt.idx <- apply(obj@tpm.value, 1,
       function(vec)any(vec>thresh)
