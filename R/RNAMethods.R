@@ -506,21 +506,29 @@ setMethod(f = "kHeat",
     }
     if (is.null(k)) {
 	pr_mb <- clusing(data.frame(mat), pdffout = gsub(".pdf","_optK.pdf", pdffout))
+        ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
+          show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
+          heatmap_legend_param = list(title = "", color_bar = "continuous"),
+          clustering_distance_rows = "spearman", clustering_method_rows = "average",
+          clustering_distance_columns = "spearman", clustering_method_columns = "average",
+          split = factor(pr_mb), gap = unit(3, "mm"))
+    } else {
+        ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
+          show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
+          heatmap_legend_param = list(title = "", color_bar = "continuous"),
+          clustering_distance_rows = "spearman", clustering_method_rows = "average",
+          clustering_distance_columns = "spearman", clustering_method_columns = "average",
+          km = k, gap = unit(3, "mm"))
     }
-    ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
-      show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
-      heatmap_legend_param = list(title = "", color_bar = "continuous"),
-      clustering_distance_rows = "spearman", clustering_method_rows = "average",
-      clustering_distance_columns = "spearman", clustering_method_columns = "average",
-      split=ifelse(is.null(k), factor(pr_mb), k), gap = unit(3, "mm"))
+    browser()
     # png(pngfout,width=2500*2,height=2500,res=300)
     pdf(pdffout)
     draw(ht_list)
     dev.off()
-    write.table(data.frame(mat, cluster = ifelse(is.null(k), factor(pr_mb), row_order(ht_list))),
-      file = gsub("pdf", "txt", pdffout),
-      row.names = TRUE, col.names = TRUE,
-      sep = "\t", quote = FALSE)
+    # write.table(data.frame(mat, cluster = ifelse(is.null(k), factor(pr_mb), row_order(ht_list))),
+      # file = gsub("pdf", "txt", pdffout),
+      # row.names = TRUE, col.names = TRUE,
+      # sep = "\t", quote = FALSE)
   }
 )
 
