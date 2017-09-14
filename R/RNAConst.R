@@ -5,8 +5,8 @@
 #' @export SepTPMCnt
 SepTPMCnt <- function(fin) {
   dat <- fread(fin)
-  tpm <- apply(dat[,-1,with <- F], 2, function(x)as.numeric(gsub("(.+);(.+)", "\\1", x)))
-  cnt <- apply(dat[,-1,with <- F], 2, function(x)round(as.numeric(gsub("(.+);(.+)", "\\2", x)), digits <- 0))
+  tpm <- apply(dat[,-1,with = F], 2, function(x)as.numeric(gsub("(.+);(.+)", "\\1", x)))
+  cnt <- apply(dat[,-1,with = F], 2, function(x)round(as.numeric(gsub("(.+);(.+)", "\\2", x)), digits <- 0))
   rpm <- t(t(cnt)/colSums(cnt) * 1e6)
   rownames(tpm) <- dat$gene
   rownames(cnt) <- dat$gene
