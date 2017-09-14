@@ -235,7 +235,7 @@ setMethod(f = "heatcorplot",
     print(pm)
     dev.off()
   }
-}
+)
 
 #' @title bplot
 #' @name bplot
