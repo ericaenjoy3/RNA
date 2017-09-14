@@ -348,14 +348,14 @@ setMethod(f = "PCAplot",
 #' plot of log2FC over pvalue during differential analysis
 #' @export MAplot
 setGeneric(name = "MAplot",
-  def = function(dd, pngfout) {
+  def = function(dd, pdffout) {
     standardGeneric("MAplot")
   }
 )
 
 setMethod(f = "MAplot",
   signature = c("data.frame", "character"),
-  definition = function(dd, pngfout) {
+  definition = function(dd, pdffout) {
     nd <- dd
     nd$nlogpval <- -log10(nd$P.Value)
     ylab <- "P"
@@ -543,7 +543,7 @@ setMethod(f = "limmaDiff",
         dd[up.idx, "DEG"] <- "Up"
         dd[down.idx, "DEG"] <- "Down"
         if (MA.it) {
-          MAplot(dd, pdffout = file.path(dout, paste0(pat, "_", coef, "_MA.png")))
+          MAplot(dd, pdffout = file.path(dout, paste0(pat, "_", coef, "_MA.pdf")))
         }
         if (HEAT.it) {
           sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", coef)
