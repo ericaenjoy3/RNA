@@ -20,10 +20,10 @@
 
 tpm <- setClass(
   Class = "tpm",
-  slots = c(tpm.val = "matrix", grps = "character"),
+  slots = c(tpm.value = "matrix", grps = "character"),
   validity = function(object){
-    if (nrow(object@tpm.val) < 1) {
-      return("Empty tpm.val matrix was given.")
+    if (nrow(object@tpm.value) < 1) {
+      return("Empty tpm.value matrix was given.")
     }
     if (length(grps) > 1) {
       return("Empty grps was given")
