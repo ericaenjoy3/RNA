@@ -221,14 +221,14 @@ setMethod(f = "hireplot",
 # pheatmap(corstats,colorRampPalette(rev(brewer.pal(n=7, name ="RdYlBu")))(100),breaks=seq(-1,1,length.out=101),annotation_col=ana.col)
 # dev.off()
 setGeneric(name = "heatcorplot",
-  def = function(obj, pngfout) {
+  def = function(obj, pdffout) {
     standardGeneric("heatcorplot")
   }
 )
 
 setMethod(f = "heatcorplot",
   signature = "tpm",
-  definition = function(obj, pngfout) {
+  definition = function(obj, pdffout) {
     pm <- ggcorr(ob@tpm.value, method = c("pairwise","spearman"),
       label = TRUE, label_alpha = TRUE)
     png(pngfout,width=3000,height=3000,res=300)
