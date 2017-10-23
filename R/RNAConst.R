@@ -4,6 +4,7 @@
 #' @rdname SepTPMCnt-methods
 #' @description
 #' Read in data file of tpm and count, and return tpm, cnt, rpm, tpm.grp.
+#' @param fin An input file name akin to "TPM_rd_merge.txt".
 #' @export SepTPMCnt
 SepTPMCnt <- function(fin) {
   dat <- fread(fin)

@@ -474,6 +474,8 @@ setMethod(f = "BICplot",
 #' @param scale.it A logical value indicating whether to row standardize the \code{tpm} matrix.
 #' @param cluster_columns_par A logical value indicating whether to cluster the columns of the \code{tpm} matrix.
 #' @param cluster_rows_par A logical value indicating whether to cluster the rows of the \code{tpm} matrix.
+#' @param cluster_column_dend_par A logical value indicating whether to show the column dendrogram.
+#' @param cluster_row_dend_par A logical value indicating whether to show the row dendrogram.
 #' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
 #' @export diffHeatmap
 setGeneric(name = "diffHeatmap",
@@ -651,20 +653,23 @@ setMethod(f = "kHeat",
 #' @param MA.it A logical value indicating whether to generate an MA plot.
 #' @param HEAT.it A logical value specifying whether to draw a heatmap for each pairwise differnetially analysis.
 #' @param GO.it A logical value specifying whether to do gene ontology analysis.
+#' @param DiffOut.it A logical value specifying whether to write out differential analysis data to file.
+#' @param log2FCthresh A numeric value specifying the log2 fold change threshold for data to be called differential.
+#' @param PValthresh A numeric value specifying the pvalue threshold for data to be called differential.
 #' @param log2.it A logical value specifying whether to perform log2 transformation.
 #' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
 #' @export limmaDiff
 setGeneric(name = "limmaDiff",
   def = function(obj, dout, pat,
     MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE, DiffOut.it = TRUE,
-    logFCthresh = 1, PValtrhesh = 0.05, log2.it = TRUE, small = 0.05) {
+    logFCthresh = 1, PValthresh = 0.05, log2.it = TRUE, small = 0.05) {
     standardGeneric("limmaDiff")
   }
 )
 
 setMethod(f = "limmaDiff",
   signature = c("tpm"),
-  definition = function(obj, dout, pat, MA.it, HEAT.it, GO.it, DiffOut.it, logFCthresh, PValtrhesh, log2.it, small) {
+  definition = function(obj, dout, pat, MA.it, HEAT.it, GO.it, DiffOut.it, logFCthresh, PValthresh, log2.it, small) {
     stopifnot(all(obj@tpm.value>=0))
     grps <- factor(obj@grps)
     if (log2.it) {
@@ -685,8 +690,8 @@ setMethod(f = "limmaDiff",
       query.population <- gsub(
         "[^\\|]+\\|([^\\|]+)\\|[^\\|]+(\\|[^\\|]+){0,1}",
         "\\1", rownames(dd))
-      up.idx <- which(dd[,"logFC"] >= logFCthresh & dd[,"P.Value"] <= PValtrhesh)
-      down.idx <- which(dd[,"logFC"] <= (-logFCthresh) & dd[,"P.Value"] <= PValtrhesh)
+      up.idx <- which(dd[,"logFC"] >= logFCthresh & dd[,"P.Value"] <= PValthresh)
+      down.idx <- which(dd[,"logFC"] <= (-logFCthresh) & dd[,"P.Value"] <= PValthresh)
       if (length(up.idx) > 0 || length(down.idx) > 0) {
         dd$DEG <- "NDiff"
         dd[up.idx, "DEG"] <- "Up"
