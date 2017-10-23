@@ -1,8 +1,12 @@
 #' @include RNAClass.R
-#' @title rmSpike
-#' @name rmSpike
-#' @rdname rmSpike-methods
-#' @export rmSpike
+#' @title sepSpike
+#' @name sepSpike
+#' @rdname sepSpike-methods
+#' @description
+#' Separate out spikein from genes based upon rownames of tpm.value slot of tpm object.
+#' @param obj A \code{tpm} object.
+#' @param invert A \code{logical} object, indicating whether to keep spike-in only (TRUE) or genes only (FALSE).
+#' @export sepSpike
 setGeneric(name = 'sepSpike',
   def = function(obj, invert = FALSE) {
     standardGeneric("sepSpike")
@@ -20,6 +24,10 @@ setMethod(f = "sepSpike",
 #' @title rmLow
 #' @name rmLow
 #' @rdname rmLow-methods
+#' @description
+#' Filter of genes or transcripts with expression levels above given threshold in one or more samples.
+#' @param obj A \code{tpm} object.
+#' @param thresh A TPM threshold.
 #' @export rmLow
 setGeneric(name = "rmLow",
   def = function(obj, thresh) {
@@ -42,6 +50,10 @@ setMethod(f = "rmLow",
 #' @title rmNonVar
 #' @name rmNonVar
 #' @rdname rmNonVar-methods
+#' @description
+#' Filter genes or transcripts with expression variabilities above a given quantile.
+#' @param obj A \code{tpm} object.
+#' @param probs A probability threshold for removing invariably expressed genes.
 #' @export rmNonVar
 setGeneric(name = "rmNonVar",
   def = function(obj, probs = 0.1) {
@@ -63,6 +75,11 @@ setMethod(f = "rmNonVar",
 #' @title lmAdjCovar
 #' @name lmAdjCovar
 #' @rdname lmAdjCovar-methods
+#' @description
+#' Linear regression to adjust for batch effects.
+#' @param x A matrix of gene expression data with genes in the rows and samples in the cols.
+#' @param covar A matrix/data.frame or vector of covariates.
+#' @param add.mean A logical vector indicating whether to add group mean to the residuals
 #' @export lmAdjCovar
 setGeneric(name = "lmAdjCovar",
   def = function(x, covar, add.mean = TRUE) {
@@ -87,6 +104,10 @@ setMethod(f = "lmAdjCovar",
 #' @title loessnorm
 #' @name loessnorm
 #' @rdname loessnorm-methods
+#' @description
+#' Loess normalization of gene or transcript expressions to expressions of spike-in.
+#' @param obj A \code{tpm} object.
+#' @param small A numeric vector indicating the adjustment to the TPM values before log2 transformation.
 #' @export loessnorm
 setGeneric(name="loessnorm",
   def = function(obj, small = 0.05) {
@@ -106,6 +127,10 @@ setMethod(f = "loessnorm",
 #' @title rdcntnorm
 #' @name rdcntnorm
 #' @rdname rdcntnorm-methods
+#' @description
+#' Normalization of gene or transcript expressions to expressions of spike-in based upon read counts in a table.
+#' @param obj A \code{tpm} object.
+#' @param stats A data.frame with named columns of 'spikein' and 'mm10' read counts.
 #' @export rdcntnorm
 setGeneric(name="rdcntnorm",
   def = function(obj, stats) {
@@ -129,7 +154,11 @@ setMethod(f = "rdcntnorm",
 #' @description
 #' tpm.value either normalised to spikein or not
 #' tpm.value either spikein, non-spikein, or all
-#' idx for selecting differnetially expressed genes
+#' idx for selecting differnetially expressed genes.
+#' @param obj A \code{tpm} object.
+#' @param ylab A character string specify y-labl on the plot.
+#' @param pdffout A character string specify pdf output file.
+#' @param probs A probability specifying the top quantile to use a ceilling in plotting.
 #' @export distplot
 setGeneric(name="distplot",
   def = function(obj, ylab, pdffout, probs = 0.85) {
@@ -143,8 +172,8 @@ setMethod(f = "distplot",
     dat <- data.table(obj@tpm.value)
     ldat=melt(dat)
     max.y=quantile(ldat$value, probs = probs)
-    p1=ggplot(ldat, aes(x = variable, y = value)) +
-      geom_boxplot(aes(fill = factor(variable))) +
+    p1=ggplot(ldat, aes(x = ~variable, y = ~value)) +
+      geom_boxplot(aes(fill = factor(~variable))) +
       scale_y_continuous(labels = comma) +
       labs(x = "", y = ylab) +
       theme(legend.title = element_blank(), legend.position="top") +
@@ -159,6 +188,10 @@ setMethod(f = "distplot",
 #' @title corplot
 #' @name corplot
 #' @rdname corplot-methods
+#' @description
+#' Scatter plot of pairwise sample comparisons
+#' @param obj A \code{tpm} object.
+#' @param pdffout A character string specify pdf output file.
 #' @export corplot
 setGeneric(name = "corplot",
   def = function(obj, pdffout) {
@@ -189,6 +222,10 @@ setMethod(f = "corplot",
 #' @title hireplot
 #' @name hireplot
 #' @rdname hireplot-methods
+#' @description
+#' Hierarchical clustering of sample correlation coefficients
+#' @param obj A \code{tpm} object.
+#' @param pdffout A character string specify pdf output file.
 #' @export hireplot
 setGeneric(name = "hireplot",
   def = function(obj, pdffout) {
@@ -203,7 +240,7 @@ setMethod(f = "hireplot",
     grps <- factor(obj@grps,levels=unique(obj@grps),ordered=T)
     tip.col <- brewer.pal(length(levels(grps)), "Dark2")[as.numeric(grps)]
     pdf(pdffout)
-    plot(as.phylo(hclust(as.dist(1-corstats), method = 'average')),
+    plot(as.phylo(hclust(as.dist(1-corstats), method = "average")),
       cex = 2, label.offset = 0, tip.color = tip.col)
     dev.off()
   }
@@ -212,6 +249,10 @@ setMethod(f = "hireplot",
 #' @title heatcorplot
 #' @name heatcorplot
 #' @rdname heatcorplot-methods
+#' @description
+#' Correlation coefficient heatmap of samples
+#' @param obj A \code{tpm} object.
+#' @param pdffout A character string specify pdf output file.
 #' @export heatcorplot
 # alternative code:
 # corstats=cor(tpm.value[idx,],method="spearman")
@@ -240,9 +281,18 @@ setMethod(f = "heatcorplot",
 #' @title bplot
 #' @name bplot
 #' @rdname bplot-methods
+#' @description
+#' Boxplot of tpm.value slot of tpm object.
+#' @param obj A \code{tpm} object.
+#' @param title A title for boxplot.
+#' @param pdffout A character string specify pdf output file.
+#' @param probs A probability specifying the top quantile to use a ceilling in plotting.
+#' @param ylab A string specifying the ylab in the plot.
+#' @param isLog A logical value indicating whether TPM values are already log2 transformed.
+#' @param small A numeric vector indicating the adjustment to the TPM values before log2 transformation.
 #' @export bplot
 setGeneric(name = "bplot",
-  def = function(obj, title, pdffout, maxPcnt = 0.80,
+  def = function(obj, title, pdffout, probs = 0.80,
     ylab = expression(paste(log[2], "(TPM)")),
     isLog = FALSE, small = 0.05) {
     standardGeneric("bplot")
@@ -251,7 +301,7 @@ setGeneric(name = "bplot",
 
 setMethod(f = "bplot",
   signature = "tpm",
-  definition = function(obj, title, pdffout, maxPcnt, ylab, isLog, small) {
+  definition = function(obj, title, pdffout, probs, ylab, isLog, small) {
     tpm.value <- obj@tpm.value
     if(!isLog) {
       tpm.value <- log2(tpm.value + small)
@@ -262,8 +312,8 @@ setMethod(f = "bplot",
     ldat$grps <- factor(ldat$variable, levels = colnames(tpm.value))
     levels(ldat$grps) <- obj@grps
     min.y <- min(ldat$value)
-    max.y <- as.numeric(quantile(ldat$value, probs = maxPcnt))
-    p1 <- ggplot(ldat, aes(x = variable, y = value, fill = ldat$grps))+
+    max.y <- as.numeric(quantile(ldat$value, probs = probs))
+    p1 <- ggplot(ldat, aes(x = ~variable, y = ~value, fill = ~grps))+
       geom_boxplot()+
       coord_cartesian(ylim = c(min.y, max.y))+
       theme(legend.title = element_blank(), legend.position = "top") +
@@ -279,6 +329,15 @@ setMethod(f = "bplot",
 #' @title PCAplot
 #' @name PCAplot
 #' @rdname PCAplot-methods
+#' @description
+#' PCA plot (PC1, PC2 and PC3) of samples
+#' @param obj A \code{tpm} object.
+#' @param pdffout A character string specify pdf output file.
+#' @param fout A text output file of top N most variably expressed genes.
+#' @param excl.col A numeric vector indicating columns to be excluded from the \code{tpm} slot of a \code{tpm} object.
+#' @param ntop A numeric value indicating selection of the top N most variably expressed genes, or Inf (default).
+#' @param isLog A logical value of whether the \code{tpm} data is already log2 transformed.
+#' @param small A numeric vector indicating the adjustment to the TPM values before log2 transformation.
 #' @export PCAplot
 setGeneric(name = "PCAplot",
   def = function(obj, pdffout, fout = NULL, excl.col = NULL,
@@ -290,7 +349,7 @@ setGeneric(name = "PCAplot",
 setMethod(f = "PCAplot",
   signature = "tpm",
   definition = function(obj, pdffout, fout, excl.col, ntop, isLog, small) {
-    out <- function(dat,fout) {
+    out <- function(dat, fout) {
       tmp <- data.frame(gene = rownames(dat), dat)
       write.table(tmp, file = fout, row.names = F,
         col.names = T, quote = F, sep = "\t")
@@ -302,13 +361,13 @@ setMethod(f = "PCAplot",
     }
     if(ncol(dat) <= 3) {
       stop('The number of samples must be larger than 3\n')
-    }  
+    }
     ridx <- apply(dat, 1, function(vec)any(vec > 0))
     stopifnot(any(ridx))
     dat <- dat[ridx,]
     if(!isLog) {
       dat <- log2(dat + small)
-    }  
+    }
     dat <- dat[apply(dat, 1, var) > 0, ]
     if (ntop < nrow(dat)){
        vars <- apply(dat, 1, var)
@@ -322,9 +381,9 @@ setMethod(f = "PCAplot",
     rownames(x) <- colnames(dat)
     if (!is.infinite(ntop)) {
       out(dat, fout)
-    }  
+    }
     uniq.cols <- rainbow(length(unique(obj@grps)))
-    cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(grps), ordered = TRUE))]
+    cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(obj@grps), ordered = TRUE))]
     x$colors <- cols
     pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
     pdf(pdffout, pointsize = 14)
@@ -341,25 +400,27 @@ setMethod(f = "PCAplot",
   }
 )
 
-#' @title MAplot
-#' @name MAplot
-#' @rdname MAplot-methods
+#' @title MAchart
+#' @name MAchart
+#' @rdname MAchart-methods
 #' @description
-#' plot of log2FC over pvalue during differential analysis
-#' @export MAplot
-setGeneric(name = "MAplot",
+#' plot of log2FC over pvalue during differential analysis.
+#' @param dd A \code{data.frame} object, with columns of 'P.Value', 'logFC', 'nlogpval' and 'DEG'.
+#' @param pdffout A character string specify pdf output file.
+#' @export MAchart
+setGeneric(name = "MAchart",
   def = function(dd, pdffout) {
-    standardGeneric("MAplot")
+    standardGeneric("MAchart")
   }
 )
 
-setMethod(f = "MAplot",
+setMethod(f = "MAchart",
   signature = c("data.frame", "character"),
   definition = function(dd, pdffout) {
     nd <- dd
     nd$nlogpval <- -log10(nd$P.Value)
     ylab <- "P"
-    p1 <- ggplot(nd, aes(x = logFC, y = nlogpval, color = DEG)) + geom_point() +
+    p1 <- ggplot(nd, aes(x = ~logFC, y = ~nlogpval, color = ~DEG)) + geom_point() +
       labs(y = bquote(-log[10](.(ylab)))) +
       theme(legend.title = element_blank(), legend.position = "top")
     pdf(pdffout, pointsize = 14)
@@ -372,6 +433,11 @@ setMethod(f = "MAplot",
 #' @title BICplot
 #' @name BICplot
 #' @rdname BICplot-methods
+#' @description
+#' Plot BIC values over cluster size.
+#' @param g A numeric vector of cluster sizes.
+#' @param BIC A numeric vector of BIC values.
+#' @param pdffout A character string specify pdf output file.
 #' @export BICplot
 setGeneric(name = "BICplot",
   def = function(g, BIC, pdffout) {
@@ -397,6 +463,18 @@ setMethod(f = "BICplot",
 #' @rdname diffHeatmap-methods
 #' @description
 #' heatmap during or after differential analysis
+#' @param tpm.value A \code{tpm} matrix.
+#' @param col.idx Numeric or logical indices specifying columns to keep of the \code{tpm} matrix.
+#' @param row.idx Numeric or logical indices specifying rows to keep of the code{tpm} matrix.
+#' @param pdffout A character string specify pdf output file.
+#' @param cutreek A logical value indicating whether to perform clustering.
+#' @param cut.alg A string value of selecting the clustering algorithm "pam","hclust" or "emmix".
+#' @param rank.man A logical value indicating whether to perform manual ranking on the row.
+#' @param log.it.already A logical value indicating whether the \code{tpm} matrix is already log2 transformed.
+#' @param scale.it A logical value indicating whether to row standardize the \code{tpm} matrix.
+#' @param cluster_columns_par A logical value indicating whether to cluster the columns of the \code{tpm} matrix.
+#' @param cluster_rows_par A logical value indicating whether to cluster the rows of the \code{tpm} matrix.
+#' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
 #' @export diffHeatmap
 setGeneric(name = "diffHeatmap",
   def = function(tpm.value, col.idx, row.idx, pdffout,
@@ -413,7 +491,7 @@ setMethod(f = "diffHeatmap",
     cut.alg, rank.man, log.it.already, scale.it, cluster_columns_par,
     cluster_rows_par, show_column_dend_par, show_row_dend_par, small, ...) {
     if (!is.null(cut.alg)) {
-	cut.alg <- match.arg(cut.alg, c("pam","hclust","emmix"))
+      cut.alg <- match.arg(cut.alg, c("pam","hclust","emmix"))
     }
     tpm.value <- tpm.value[row.idx, col.idx]
     if (!log.it.already) {
@@ -425,7 +503,7 @@ setMethod(f = "diffHeatmap",
       norm <- tpm.value
     }
     if (rank.man) {
-      norm <- norm[order(norm[,1],-norm[,2],decreasing=T),];
+      norm <- norm[order(norm[,1], -norm[,2], decreasing=T),];
       cluster_rows <- FALSE
     }
     if (!is.null(cutreek)) {
@@ -466,6 +544,12 @@ setMethod(f = "diffHeatmap",
 )
 
 #' @title clusing
+#' @name clusing
+#' @rdname clusing-methods
+#' @description
+#' Determine the optimum number of k-mean clusters, and return cluster membership.
+#' @param dat A \code{data.frame} of \code{tpm} values.
+#' @param pdffout A character string specify the diagnosis pdf file of the optimum number of clusters.
 setGeneric(name="clusing",
   def=function(dat, pdffout) {
     standardGeneric("clusing")
@@ -488,6 +572,17 @@ setMethod(f = "clusing",
 
 
 #' @title kHeat
+#' @name kHeat
+#' @rdname kHeat-methods
+#' @description
+#' K-mean clustering and heatmap
+#' @param obj A \code{tpm} object.
+#' @param pdffout A character string specify pdf output file.
+#' @param k A numeric value specifying the number of clusters.
+#' @param log2.it A logical value specifying whether to log2 transform the tpm value data.
+#' @param scale.it A logical value specifying whether to row standardize the tpm value data.
+#' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
+#' @export kHeat
 setGeneric(name = "kHeat",
   def = function(obj, pdffout, k = NULL, log2.it = TRUE, scale.it = TRUE, small = 0.05) {
     standardGeneric("kHeat")
@@ -505,14 +600,17 @@ setMethod(f = "kHeat",
       mat <- t(apply(mat, 1, scale))
     }
     if (is.null(k)) {
-	pr_mb <- clusing(data.frame(mat), pdffout = gsub(".pdf","_optK.pdf", pdffout))
-        ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
+        message("clusing function when k is null.")
+        pr_mb <- clusing(data.frame(mat), pdffout = gsub(".pdf","_optK.pdf", pdffout))
+        message("Heatmap function when k is null.")
+        ht_list <- Heatmap(mat, show_row_names = TRUE, show_column_names = TRUE, cluster_rows = TRUE,
           show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
           heatmap_legend_param = list(title = "", color_bar = "continuous"),
           clustering_distance_rows = "spearman", clustering_method_rows = "average",
           clustering_distance_columns = "spearman", clustering_method_columns = "average",
           split = factor(pr_mb), gap = unit(3, "mm"))
     } else {
+        message("heatmap function when k is ", k)
         ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
           show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
           heatmap_legend_param = list(title = "", color_bar = "continuous"),
@@ -524,10 +622,20 @@ setMethod(f = "kHeat",
     pdf(pdffout)
     draw(ht_list)
     dev.off()
-    # write.table(data.frame(mat, cluster = ifelse(is.null(k), factor(pr_mb), row_order(ht_list))),
-      # file = gsub("pdf", "txt", pdffout),
-      # row.names = TRUE, col.names = TRUE,
-      # sep = "\t", quote = FALSE)
+    message("running prepare function...")
+    ht.obj <- prepare(ht_list)
+    message("done with prepare function...")
+    idx.dat <- do.call("rbind",
+      lapply(seq_along(ht.obj@row_order_list),function(i){
+        data.frame(cluster = i, idx = ht.obj@row_order_list[[i]])
+      })
+    )
+    idx.dat <- idx.dat[order(idx.dat[, "idx"]), ]
+    dat <- data.frame(gene = rownames(mat), idx.dat, mat = mat)
+    write.table(dat,
+      file = gsub("pdf", "txt", pdffout),
+      row.names = FALSE, col.names = TRUE,
+      sep = "\t", quote = FALSE)
   }
 )
 
@@ -537,6 +645,14 @@ setMethod(f = "kHeat",
 #' @description
 #' tpm.value either normalised to spikein or not
 #' filtering of genes must be done before hand
+#' @param obj A \code{tpm} object.
+#' @param dout A character string specifying the output directory.
+#' @param pat A character string specifying the prefix of file(s) without the directory name.
+#' @param MA.it A logical value indicating whether to generate an MA plot.
+#' @param HEAT.it A logical value specifying whether to draw a heatmap for each pairwise differnetially analysis.
+#' @param GO.it A logical value specifying whether to do gene ontology analysis.
+#' @param log2.it A logical value specifying whether to perform log2 transformation.
+#' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
 #' @export limmaDiff
 setGeneric(name = "limmaDiff",
   def = function(obj, dout, pat,
@@ -564,7 +680,7 @@ setMethod(f = "limmaDiff",
     fit <- contrasts.fit(fit, contrast.matrix)
     fit <- eBayes(fit)
     dat.list <- lapply(contrast,function(coef){
-      dd <- topTable(fit, adjust = "BH", number = Inf, coef = coef, sort = 'none')
+      dd <- topTable(fit, adjust.method = "BH", number = Inf, coef = coef, sort.by = 'none')
       dd <- dd[,c("logFC","P.Value","adj.P.Val")]
       query.population <- gsub(
         "[^\\|]+\\|([^\\|]+)\\|[^\\|]+(\\|[^\\|]+){0,1}",
@@ -618,7 +734,15 @@ setMethod(f = "limmaDiff",
 #' @name lineGraph
 #' @rdname lineGraph-methods
 #' @description
-#' line graphs of clustering
+#' Line graphs of clustering
+#' @param obj A \code{tpm} object.
+#' @param col.idx A numeric or logical vector specifying columns to keep.
+#' @param row.idx A numeric or logical vector specifying rows to keep.
+#' @param clusters A numeric vector indicating cluster membership.
+#' @param pdffout A character string specify pdf output file.
+#' @param log.it.already A logical value specifying whether tpm values were already log2 transformed.
+#' @param mean.it A logical value indicating whether to generate group values from individual samples.
+#' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
 #' @export lineGraph
 setGeneric(name = "lineGraph",
   def = function(obj, col.idx, row.idx, clusters, pdffout, log.it.already = FALSE, mean.it = FALSE, small = 0.05) {
@@ -627,7 +751,7 @@ setGeneric(name = "lineGraph",
 )
 
 setMethod(f = "lineGraph",
-  signature = c("obj"),
+  signature = c("tpm"),
   definition = function(obj, col.idx, row.idx, clusters, pdffout, log.it.already, mean.it, small) {
     tpm.value <- obj@tpm.value[row.idx, col.idx]
     if (!log.it.already) {
@@ -638,14 +762,14 @@ setMethod(f = "lineGraph",
     norm.grp <- t(apply(norm, 1, function(vec)tapply(vec, grps, mean)))
     if (mean.it) {
       dat <- data.table(norm.grp, clusters = clusters)
-      dat <- data.table(dat[, lapply(.SD, mean, na.rm = TRUE), by = clusters, .SDcols = levels(grps), id="mean")
+      dat <- data.table(dat[, lapply(.SD, mean, na.rm = TRUE), by = clusters, .SDcols = levels(grps)], id="mean")
       setcolorder(dat, c(2:(ncol(dat)-1), 1, ncol(dat)))
     } else {
-      dat <- data.table(norm.grp, clusters=clusters, id=rownames(norm.grp))
+      dat <- data.table(norm.grp, clusters = clusters, id = rownames(norm.grp))
     }
     ldat <- melt(dat, id.vars = c(1:ncol(dat))[!1:ncol(dat) %in% 1:ncol(norm.grp)])
     ylab <- "TPM"
-    p1 <- ggplot(data = ldat, aes(x = variable, y = value, group = id, colour = "#FF9999" )) + geom_line() +
+    p1 <- ggplot(data = ldat, aes(x = ~variable, y = ~value, group = ~id, colour = "#FF9999" )) + geom_line() +
       geom_point() + facet_wrap(~ clusters) + labs(y = bquote(paste("Standardized ", log[2](.(ylab))))) + theme(legend.position="none")
     pdf(pdffout, pointsize = 14)
     theme_set(theme_grey(base_size = 15))

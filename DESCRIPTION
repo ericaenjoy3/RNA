@@ -1,10 +1,16 @@
 Package: RNA
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: RNA data analysis
+Version: 0.0.0.9
+Author: Erica Liu
+Maintainer: Erica LIu <ericaenjoy3@yahoo.co.uk>
+Description: Perform RNA-seq data analysis and plotting.
 Depends: R (>= 3.4.0)
-License: What license is it under?
+Imports: ComplexHeatmap, GGally, GOtest, ModClusterR, RColorBrewer, addgrids3d, affy, ape, circlize, data.table, ggplot2, limma, multiplot, methods, pheatmap, scales, scatterplot3d, cluster
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Collate:
+    'RNAClass.R'
+    'RNAConst.R'
+    'RNAMethods.R'

@@ -2,6 +2,8 @@
 #' @title read in Salmon differential expression file
 #' @name SepTPMCnt
 #' @rdname SepTPMCnt-methods
+#' @description
+#' Read in data file of tpm and count, and return tpm, cnt, rpm, tpm.grp.
 #' @export SepTPMCnt
 SepTPMCnt <- function(fin) {
   dat <- fread(fin)

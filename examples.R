@@ -32,7 +32,7 @@ bplot(spike.obj, title="Spike-in",
   isLog = FALSE, small = 0.05)
 bplot(gene.obj, title = "Genes",
   pdffout = file.path(dout,"Daf_genes_bplot.pdf"), maxPcnt = 0.80,
-  ylab = expression(paste(log[2], "(TPM)")), 
+  ylab = expression(paste(log[2], "(TPM)")),
   isLog = FALSE, small = 0.05)
 
 distplot(gene.obj, ylab = "TPM",
@@ -54,17 +54,17 @@ dat <- limmaDiff(genefilter.obj, dout, pat = "Daf",
   logFCthresh = 1, PValtrhesh = 10^(-5), log2.it = TRUE, small = 0.05)
 
 # differential expressed genes and also in genevar.obj -------------------------
-ridx <- apply(dat[,grep("DEG", colnames(dat))], 1 , 
+ridx <- apply(dat[,grep("DEG", colnames(dat))], 1 ,
   function(vec)any(vec != 'NDiff'))
-com.obj <- new("tpm", 
+com.obj <- new("tpm",
   tpm.value = genefilter.obj@tpm.value[rownames(dat)[ridx] %in% rownames(genevar.obj@tpm.value), ],
   grps = genefilter.obj@grps)
-ridx <- dat[, "DEG_ESC.MEF"] != 'NDiff' & apply(dat[, grep("^ESC", colnames(dat))], 1, function(vec)any(vec>10))
-esc.obj <- new("tpm",   
+ridx <- dat[, "DEG_ESC.MEF"] != 'NDiff' & apply(dat[, grep("^(ESC|MEF)", colnames(dat))], 1, function(vec)any(vec>10))
+esc.obj <- new("tpm",
   tpm.value = genefilter.obj@tpm.value[ridx, ],
   grps = genefilter.obj@grps)
 
 
 # differential expressed genes between ESC and MEF------------------------------
 kHeat(com.obj, pdffout = file.path(dout, "Daf_comDiff_kHeat.pdf"), k = 9)
-kHeat(esc.obj, pdffout = file.path(dout, "Daf_escDiff_kHeat.pdf"), k = 5)
+kHeat(esc.obj, pdffout = file.path(dout, "Daf_escDiff_k4Heat.pdf"), k = 4)

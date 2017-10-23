@@ -15,7 +15,12 @@
 #' @import circlize
 #' @import multiplot
 #' @import addgrids3d
-#' @importFrom ModClusterR
+#' @import ModClusterR
+#' @import methods
+#' @importFrom utils read.table write.table combn
+#' @importFrom stats cor model.matrix as.dist hclust cutree quantile lm var prcomp
+#' @importFrom graphics plot text legend par
+#' @importFrom cluster pam
 ###
 
 tpm <- setClass(
@@ -25,7 +30,7 @@ tpm <- setClass(
     if (nrow(object@tpm.value) < 1) {
       return("Empty tpm.value matrix was given.")
     }
-    if (length(grps) > 1) {
+    if (length(object@grps) < 1) {
       return("Empty grps was given")
     }
     return(TRUE)
