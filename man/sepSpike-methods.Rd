@@ -6,6 +6,11 @@
 \usage{
 sepSpike(obj, invert = FALSE)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{invert}{A \code{logical} object, indicating whether to keep spike-in only (TRUE) or genes only (FALSE).}
+}
 \description{
 Separate out spikein from genes based upon rownames of tpm.value slot of tpm object.
 }

@@ -6,6 +6,13 @@
 \usage{
 lmAdjCovar(x, covar, add.mean = TRUE)
 }
+\arguments{
+\item{x}{A matrix of gene expression data with genes in the rows and samples in the cols.}
+
+\item{covar}{A matrix/data.frame or vector of covariates.}
+
+\item{add.mean}{A logical vector indicating whether to add group mean to the residuals}
+}
 \description{
 Linear regression to adjust for batch effects.
 }

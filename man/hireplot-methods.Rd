@@ -6,6 +6,11 @@
 \usage{
 hireplot(obj, pdffout)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{pdffout}{A character string specify pdf output file.}
+}
 \description{
 Hierarchical clustering of sample correlation coefficients
 }

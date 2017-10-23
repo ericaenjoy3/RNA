@@ -7,6 +7,21 @@
 PCAplot(obj, pdffout, fout = NULL, excl.col = NULL, ntop = Inf,
   isLog = FALSE, small = 0.05)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{pdffout}{A character string specify pdf output file.}
+
+\item{fout}{A text output file of top N most variably expressed genes.}
+
+\item{excl.col}{A numeric vector indicating columns to be excluded from the \code{tpm} slot of a \code{tpm} object.}
+
+\item{ntop}{A numeric value indicating selection of the top N most variably expressed genes, or Inf (default).}
+
+\item{isLog}{A logical value of whether the \code{tpm} data is already log2 transformed.}
+
+\item{small}{A numeric vector indicating the adjustment to the TPM values before log2 transformation.}
+}
 \description{
 PCA plot (PC1, PC2 and PC3) of samples
 }

@@ -6,6 +6,11 @@
 \usage{
 MAchart(dd, pdffout)
 }
+\arguments{
+\item{dd}{A \code{data.frame} object, with columns of 'P.Value', 'logFC', 'nlogpval' and 'DEG'.}
+
+\item{pdffout}{A character string specify pdf output file.}
+}
 \description{
-plot of log2FC over pvalue during differential analysis
+plot of log2FC over pvalue during differential analysis.
 }

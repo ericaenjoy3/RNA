@@ -6,6 +6,13 @@
 \usage{
 BICplot(g, BIC, pdffout)
 }
+\arguments{
+\item{g}{A numeric vector of cluster sizes.}
+
+\item{BIC}{A numeric vector of BIC values.}
+
+\item{pdffout}{A character string specify pdf output file.}
+}
 \description{
 Plot BIC values over cluster size.
 }

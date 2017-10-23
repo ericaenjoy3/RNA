@@ -6,8 +6,17 @@
 \usage{
 distplot(obj, ylab, pdffout, probs = 0.85)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{ylab}{A character string specify y-labl on the plot.}
+
+\item{pdffout}{A character string specify pdf output file.}
+
+\item{probs}{A probability specifying the top quantile to use a ceilling in plotting.}
+}
 \description{
 tpm.value either normalised to spikein or not
 tpm.value either spikein, non-spikein, or all
-idx for selecting differnetially expressed genes
+idx for selecting differnetially expressed genes.
 }

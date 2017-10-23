@@ -6,6 +6,11 @@
 \usage{
 rmNonVar(obj, probs = 0.1)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{probs}{A probability threshold for removing invariably expressed genes.}
+}
 \description{
-Filter genes or transcripts with expression variabilities above a given quantile
+Filter genes or transcripts with expression variabilities above a given quantile.
 }

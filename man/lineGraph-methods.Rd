@@ -7,6 +7,23 @@
 lineGraph(obj, col.idx, row.idx, clusters, pdffout, log.it.already = FALSE,
   mean.it = FALSE, small = 0.05)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{col.idx}{A numeric or logical vector specifying columns to keep.}
+
+\item{row.idx}{A numeric or logical vector specifying rows to keep.}
+
+\item{clusters}{A numeric vector indicating cluster membership.}
+
+\item{pdffout}{A character string specify pdf output file.}
+
+\item{log.it.already}{A logical value specifying whether tpm values were already log2 transformed.}
+
+\item{mean.it}{A logical value indicating whether to generate group values from individual samples.}
+
+\item{small}{A numeric value indicating the adjustment to the TPM values before log2 transformation.}
+}
 \description{
 Line graphs of clustering
 }

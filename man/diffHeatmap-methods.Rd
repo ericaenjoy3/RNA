@@ -10,6 +10,31 @@ diffHeatmap(tpm.value, col.idx, row.idx, pdffout, cutreek = NULL,
   show_column_dend_par = TRUE, show_row_dend_par = FALSE, small = 0.05,
   ...)
 }
+\arguments{
+\item{tpm.value}{A \code{tpm} matrix.}
+
+\item{col.idx}{Numeric or logical indices specifying columns to keep of the \code{tpm} matrix.}
+
+\item{row.idx}{Numeric or logical indices specifying rows to keep of the code{tpm} matrix.}
+
+\item{pdffout}{A character string specify pdf output file.}
+
+\item{cutreek}{A logical value indicating whether to perform clustering.}
+
+\item{cut.alg}{A string value of selecting the clustering algorithm "pam","hclust" or "emmix".}
+
+\item{rank.man}{A logical value indicating whether to perform manual ranking on the row.}
+
+\item{log.it.already}{A logical value indicating whether the \code{tpm} matrix is already log2 transformed.}
+
+\item{scale.it}{A logical value indicating whether to row standardize the \code{tpm} matrix.}
+
+\item{cluster_columns_par}{A logical value indicating whether to cluster the columns of the \code{tpm} matrix.}
+
+\item{cluster_rows_par}{A logical value indicating whether to cluster the rows of the \code{tpm} matrix.}
+
+\item{small}{A numeric value indicating the adjustment to the TPM values before log2 transformation.}
+}
 \description{
 heatmap during or after differential analysis
 }

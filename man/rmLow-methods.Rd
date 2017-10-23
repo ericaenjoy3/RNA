@@ -6,6 +6,11 @@
 \usage{
 rmLow(obj, thresh)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{thresh}{A TPM threshold.}
+}
 \description{
 Filter of genes or transcripts with expression levels above given threshold in one or more samples.
 }

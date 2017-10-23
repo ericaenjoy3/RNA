@@ -6,6 +6,11 @@
 \usage{
 rdcntnorm(obj, stats)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{stats}{A data.frame with named columns of 'spikein' and 'mm10' read counts.}
+}
 \description{
 Normalization of gene or transcript expressions to expressions of spike-in based upon read counts in a table.
 }

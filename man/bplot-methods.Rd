@@ -4,8 +4,23 @@
 \alias{bplot}
 \title{bplot}
 \usage{
-bplot(obj, title, pdffout, maxPcnt = 0.8, ylab = expression(paste(log[2],
+bplot(obj, title, pdffout, probs = 0.8, ylab = expression(paste(log[2],
   "(TPM)")), isLog = FALSE, small = 0.05)
+}
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{title}{A title for boxplot.}
+
+\item{pdffout}{A character string specify pdf output file.}
+
+\item{probs}{A probability specifying the top quantile to use a ceilling in plotting.}
+
+\item{ylab}{A string specifying the ylab in the plot.}
+
+\item{isLog}{A logical value indicating whether TPM values are already log2 transformed.}
+
+\item{small}{A numeric vector indicating the adjustment to the TPM values before log2 transformation.}
 }
 \description{
 Boxplot of tpm.value slot of tpm object.

@@ -6,6 +6,11 @@
 \usage{
 loessnorm(obj, small = 0.05)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{small}{A numeric vector indicating the adjustment to the TPM values before log2 transformation.}
+}
 \description{
-Loess normalization of gene or transcript expressions to expressions of spike-in
+Loess normalization of gene or transcript expressions to expressions of spike-in.
 }

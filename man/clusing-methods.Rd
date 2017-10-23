@@ -6,6 +6,11 @@
 \usage{
 clusing(dat, pdffout)
 }
+\arguments{
+\item{dat}{A \code{data.frame} of \code{tpm} values.}
+
+\item{pdffout}{A character string specify the diagnosis pdf file of the optimum number of clusters.}
+}
 \description{
 Determine the optimum number of k-mean clusters, and return cluster membership.
 }

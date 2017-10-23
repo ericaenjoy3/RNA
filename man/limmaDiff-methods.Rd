@@ -8,6 +8,23 @@ limmaDiff(obj, dout, pat, MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE,
   DiffOut.it = TRUE, logFCthresh = 1, PValtrhesh = 0.05, log2.it = TRUE,
   small = 0.05)
 }
+\arguments{
+\item{obj}{A \code{tpm} object.}
+
+\item{dout}{A character string specifying the output directory.}
+
+\item{pat}{A character string specifying the prefix of file(s) without the directory name.}
+
+\item{MA.it}{A logical value indicating whether to generate an MA plot.}
+
+\item{HEAT.it}{A logical value specifying whether to draw a heatmap for each pairwise differnetially analysis.}
+
+\item{GO.it}{A logical value specifying whether to do gene ontology analysis.}
+
+\item{log2.it}{A logical value specifying whether to perform log2 transformation.}
+
+\item{small}{A numeric value indicating the adjustment to the TPM values before log2 transformation.}
+}
 \description{
 tpm.value either normalised to spikein or not
 filtering of genes must be done before hand
