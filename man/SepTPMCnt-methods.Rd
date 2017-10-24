@@ -6,6 +6,9 @@
 \usage{
 SepTPMCnt(fin)
 }
+\arguments{
+\item{fin}{An input file name akin to "TPM_rd_merge.txt".}
+}
 \description{
 Read in data file of tpm and count, and return tpm, cnt, rpm, tpm.grp.
 }

@@ -13,6 +13,7 @@ setGeneric(name = 'sepSpike',
   }
 )
 
+#' @rdname sepSpike-methods
 setMethod(f = "sepSpike",
   signature = c("tpm", "logical"),
   def = function(obj, invert) {
@@ -35,6 +36,7 @@ setGeneric(name = "rmLow",
   }
 )
 
+#' @rdname rmLow-methods
 setMethod(f = "rmLow",
   signature = c("tpm", "numeric"),
   definition = function(obj, thresh) {
@@ -61,6 +63,7 @@ setGeneric(name = "rmNonVar",
   }
 )
 
+#' @rdname rmNonVar-methods
 setMethod(f = "rmNonVar",
   signature = c("tpm", "numeric"),
   definition = function(obj, probs) {
@@ -87,6 +90,7 @@ setGeneric(name = "lmAdjCovar",
   }
 )
 
+#' @rdname lmAdjCovar-methods
 setMethod(f = "lmAdjCovar",
   signature = c("numeric", "data.frame", "logical"),
   definition = function(x, covar, add.mean){
@@ -115,6 +119,7 @@ setGeneric(name="loessnorm",
   }
 )
 
+#' @rdname loessnorm-methods
 setMethod(f = "loessnorm",
   signature = c("tpm", "ANY"),
   definition = function(obj, small = 0.05){
@@ -138,6 +143,7 @@ setGeneric(name="rdcntnorm",
   }
 )
 
+#' @rdname rdcntnorm-methods
 setMethod(f = "rdcntnorm",
   signature = c("tpm", "data.frame"),
   definition = function(obj, stats) {
@@ -166,6 +172,7 @@ setGeneric(name="distplot",
   }
 )
 
+#' @rdname distplot-methods
 setMethod(f = "distplot",
   signature = c("tpm", "character", "character"),
   definition = function(obj, ylab, pdffout, probs) {
@@ -199,6 +206,7 @@ setGeneric(name = "corplot",
   }
 )
 
+#' @rdname corplot-methods
 setMethod(f = "corplot",
   signature = c("tpm", "character"),
   definition = function(obj, pdffout) {
@@ -233,6 +241,7 @@ setGeneric(name = "hireplot",
   }
 )
 
+#' @rdname hireplot-methods
 setMethod(f = "hireplot",
   signature = c("tpm"),
   definition = function(obj, pdffout) {
@@ -267,6 +276,7 @@ setGeneric(name = "heatcorplot",
   }
 )
 
+#' @rdname heatcorplot-methods
 setMethod(f = "heatcorplot",
   signature = "tpm",
   definition = function(obj, pdffout) {
@@ -299,6 +309,7 @@ setGeneric(name = "bplot",
   }
 )
 
+#' @rdname bplot-methods
 setMethod(f = "bplot",
   signature = "tpm",
   definition = function(obj, title, pdffout, probs, ylab, isLog, small) {
@@ -346,6 +357,7 @@ setGeneric(name = "PCAplot",
   }
 )
 
+#' @rdname PCAplot-methods
 setMethod(f = "PCAplot",
   signature = "tpm",
   definition = function(obj, pdffout, fout, excl.col, ntop, isLog, small) {
@@ -414,6 +426,7 @@ setGeneric(name = "MAchart",
   }
 )
 
+#' @rdname MAchart-methods
 setMethod(f = "MAchart",
   signature = c("data.frame", "character"),
   definition = function(dd, pdffout) {
@@ -445,6 +458,7 @@ setGeneric(name = "BICplot",
   }
 )
 
+#' @rdname BICplot-methods
 setMethod(f = "BICplot",
   signature = c("numeric", "numeric", "character"),
   definition = function(g, BIC, pdffout) {
@@ -474,9 +488,10 @@ setMethod(f = "BICplot",
 #' @param scale.it A logical value indicating whether to row standardize the \code{tpm} matrix.
 #' @param cluster_columns_par A logical value indicating whether to cluster the columns of the \code{tpm} matrix.
 #' @param cluster_rows_par A logical value indicating whether to cluster the rows of the \code{tpm} matrix.
-#' @param cluster_column_dend_par A logical value indicating whether to show the column dendrogram.
-#' @param cluster_row_dend_par A logical value indicating whether to show the row dendrogram.
+#' @param show_column_dend_par A logical value indicating whether to show the column dendrogram.
+#' @param show_row_dend_par A logical value indicating whether to show the row dendrogram.
 #' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
+#' @param ... Additional arguments to be passed to methods.
 #' @export diffHeatmap
 setGeneric(name = "diffHeatmap",
   def = function(tpm.value, col.idx, row.idx, pdffout,
@@ -487,6 +502,7 @@ setGeneric(name = "diffHeatmap",
   }
 )
 
+#' @rdname diffHeatmap-methods
 setMethod(f = "diffHeatmap",
   signature = c("matrix"),
   definition = function(tpm.value, col.idx, row.idx, pdffout, cutreek,
@@ -558,6 +574,7 @@ setGeneric(name="clusing",
   }
 )
 
+#' @rdname clusing-methods
 setMethod(f = "clusing",
   signature=c(dat = "data.frame", pdffout="character"),
   definition=function(dat, pdffout){
@@ -591,6 +608,7 @@ setGeneric(name = "kHeat",
   }
 )
 
+#' @rdname kHeat-methods
 setMethod(f = "kHeat",
   signature = c("tpm", "ANY"),
   definition = function(obj, pdffout, k, log2.it, scale.it, small) {
@@ -654,7 +672,7 @@ setMethod(f = "kHeat",
 #' @param HEAT.it A logical value specifying whether to draw a heatmap for each pairwise differnetially analysis.
 #' @param GO.it A logical value specifying whether to do gene ontology analysis.
 #' @param DiffOut.it A logical value specifying whether to write out differential analysis data to file.
-#' @param log2FCthresh A numeric value specifying the log2 fold change threshold for data to be called differential.
+#' @param logFCthresh A numeric value specifying the log2 fold change threshold for data to be called differential.
 #' @param PValthresh A numeric value specifying the pvalue threshold for data to be called differential.
 #' @param log2.it A logical value specifying whether to perform log2 transformation.
 #' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
@@ -667,6 +685,7 @@ setGeneric(name = "limmaDiff",
   }
 )
 
+#' @rdname limmaDiff-methods
 setMethod(f = "limmaDiff",
   signature = c("tpm"),
   definition = function(obj, dout, pat, MA.it, HEAT.it, GO.it, DiffOut.it, logFCthresh, PValthresh, log2.it, small) {
@@ -755,6 +774,7 @@ setGeneric(name = "lineGraph",
   }
 )
 
+#' @rdname lineGraph-methods
 setMethod(f = "lineGraph",
   signature = c("tpm"),
   definition = function(obj, col.idx, row.idx, clusters, pdffout, log.it.already, mean.it, small) {
