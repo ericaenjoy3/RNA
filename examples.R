@@ -28,10 +28,10 @@ distplot(gene.obj, ylab="TPM",
   pdffout = file.path(dout, "Daf_genes_distplot.pdf"))
 bplot(spike.obj, title="Spike-in",
   pdffout = file.path(dout, "Daf_spikein_bplot.pdf"),
-  maxPcnt = 0.80, ylab=expression(paste(log[2], "(TPM)")),
+  probs = 0.80, ylab=expression(paste(log[2], "(TPM)")),
   isLog = FALSE, small = 0.05)
 bplot(gene.obj, title = "Genes",
-  pdffout = file.path(dout,"Daf_genes_bplot.pdf"), maxPcnt = 0.80,
+  pdffout = file.path(dout,"Daf_genes_bplot.pdf"), probs = 0.80,
   ylab = expression(paste(log[2], "(TPM)")),
   isLog = FALSE, small = 0.05)
 
@@ -51,7 +51,7 @@ genefilter.obj <- rmLow(gene.obj, thresh = 1)
 genevar.obj <- rmNonVar(genefilter.obj, probs = 0.1)
 dat <- limmaDiff(genefilter.obj, dout, pat = "Daf",
   MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE, DiffOut.it = TRUE,
-  logFCthresh = 1, PValtrhesh = 10^(-5), log2.it = TRUE, small = 0.05)
+  logFCthresh = 1, PValthresh = 10^(-5), log2.it = TRUE, small = 0.05)
 
 # differential expressed genes and also in genevar.obj -------------------------
 ridx <- apply(dat[,grep("DEG", colnames(dat))], 1 ,

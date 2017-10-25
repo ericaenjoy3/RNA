@@ -174,17 +174,18 @@ setGeneric(name="distplot",
 
 #' @rdname distplot-methods
 setMethod(f = "distplot",
-  signature = c("tpm", "character", "character"),
+  signature = c("tpm", "character", "character", "numeric"),
   definition = function(obj, ylab, pdffout, probs) {
+    browser()
     dat <- data.table(obj@tpm.value)
-    ldat=melt(dat)
-    max.y=quantile(ldat$value, probs = probs)
-    p1=ggplot(ldat, aes_(x = ~variable, y = ~value)) +
+    ldat <- melt(dat)
+    max.y <- quantile(ldat$value, probs = probs)
+    p1 <- ggplot(ldat, aes_(x = ~variable, y = ~value)) +
       geom_boxplot(aes_(fill = factor(~variable))) +
       scale_y_continuous(labels = comma) +
       labs(x = "", y = ylab) +
       theme(legend.title = element_blank(), legend.position="top") +
-      coord_cartesian(ylim=c(0,max.y))
+      coord_cartesian(ylim=c(0, max.y))
       pdf(pdffout)
       theme_set(theme_grey(base_size=15))
     multiplot(p1,cols=1)
@@ -717,7 +718,7 @@ setMethod(f = "limmaDiff",
         dd[up.idx, "DEG"] <- "Up"
         dd[down.idx, "DEG"] <- "Down"
         if (MA.it) {
-          MAplot(dd, pdffout = file.path(dout, paste0(pat, "_", coef, "_MA.pdf")))
+          MAchart(dd, pdffout = file.path(dout, paste0(pat, "_", coef, "_MA.pdf")))
         }
         if (HEAT.it) {
           sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", coef)
