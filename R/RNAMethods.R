@@ -179,8 +179,8 @@ setMethod(f = "distplot",
     dat <- data.table(obj@tpm.value)
     ldat=melt(dat)
     max.y=quantile(ldat$value, probs = probs)
-    p1=ggplot(ldat, aes(x = ~variable, y = ~value)) +
-      geom_boxplot(aes(fill = factor(~variable))) +
+    p1=ggplot(ldat, aes_(x = ~variable, y = ~value)) +
+      geom_boxplot(aes_(fill = factor(~variable))) +
       scale_y_continuous(labels = comma) +
       labs(x = "", y = ylab) +
       theme(legend.title = element_blank(), legend.position="top") +
@@ -324,7 +324,7 @@ setMethod(f = "bplot",
     levels(ldat$grps) <- obj@grps
     min.y <- min(ldat$value)
     max.y <- as.numeric(quantile(ldat$value, probs = probs))
-    p1 <- ggplot(ldat, aes(x = ~variable, y = ~value, fill = ~grps))+
+    p1 <- ggplot(ldat, aes_(x = ~variable, y = ~value, fill = ~grps))+
       geom_boxplot()+
       coord_cartesian(ylim = c(min.y, max.y))+
       theme(legend.title = element_blank(), legend.position = "top") +
@@ -433,7 +433,7 @@ setMethod(f = "MAchart",
     nd <- dd
     nd$nlogpval <- -log10(nd$P.Value)
     ylab <- "P"
-    p1 <- ggplot(nd, aes(x = ~logFC, y = ~nlogpval, color = ~DEG)) + geom_point() +
+    p1 <- ggplot(nd, aes_(x = ~logFC, y = ~nlogpval, color = ~DEG)) + geom_point() +
       labs(y = bquote(-log[10](.(ylab)))) +
       theme(legend.title = element_blank(), legend.position = "top")
     pdf(pdffout, pointsize = 14)
@@ -463,7 +463,7 @@ setMethod(f = "BICplot",
   signature = c("numeric", "numeric", "character"),
   definition = function(g, BIC, pdffout) {
     dd <- data.frame(g = g ,BIC = BIC)
-    p1 <- ggplot(dd, aes(x = g, y = BIC)) + geom_point(colour = "#FF9999") +
+    p1 <- ggplot(dd, aes_(x = g, y = BIC)) + geom_point(colour = "#FF9999") +
       xlab("Cluster Size")+ylab("BIC")
     pdf(pdffout, pointsize = 14)
     theme_set(theme_grey(base_size = 15))
@@ -794,7 +794,7 @@ setMethod(f = "lineGraph",
     }
     ldat <- melt(dat, id.vars = c(1:ncol(dat))[!1:ncol(dat) %in% 1:ncol(norm.grp)])
     ylab <- "TPM"
-    p1 <- ggplot(data = ldat, aes(x = ~variable, y = ~value, group = ~id, colour = "#FF9999" )) + geom_line() +
+    p1 <- ggplot(data = ldat, aes_(x = ~variable, y = ~value, group = ~id, colour = "#FF9999" )) + geom_line() +
       geom_point() + facet_wrap(~ clusters) + labs(y = bquote(paste("Standardized ", log[2](.(ylab))))) + theme(legend.position="none")
     pdf(pdffout, pointsize = 14)
     theme_set(theme_grey(base_size = 15))
