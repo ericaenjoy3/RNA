@@ -631,6 +631,7 @@ setMethod(f = "kHeat",
           split = factor(pr_mb), gap = unit(3, "mm"))
     } else {
         message("heatmap function when k is ", k)
+        set.seed(888)
         ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
           show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
           heatmap_legend_param = list(title = "", color_bar = "continuous"),
