@@ -396,7 +396,7 @@ setMethod(f = "PCAplot",
     ve13 <- sprintf("%.1f",ve[1:3]*100)
     x <- data.frame(PC1 = pca$x[,1], PC2 = pca$x[,2], PC3 = pca$x[,3])
     rownames(x) <- colnames(dat)
-    if (!is.infinite(ntop)) {
+    if (!is.infinite(ntop) && !is.null(fout)) {
       out(dat, fout)
     }
     uniq.cols <- rainbow(length(unique(obj@grps)))
