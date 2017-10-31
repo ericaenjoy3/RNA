@@ -403,7 +403,7 @@ setMethod(f = "PCAplot",
     cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(obj@grps), ordered = TRUE))]
     x$colors <- cols
     pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
-    pdf(pdffout, pointsize = 14, height = 7 * (ncol(obj@tpm.value)/10), width = 7 *(ncol(obj@tpm.value)/10))
+    pdf(pdffout, pointsize = 14, height = max(7, 7 * (ncol(obj@tpm.value)/20)), width = max(7, 7 *(ncol(obj@tpm.value)/20)))
     par(mar = c(1, 1, 1, 1))
     s3d <- scatterplot3d(x[ , 1:3], grid = FALSE, box = FALSE, mar = c(3, 3, 2, 2), pch = "")
     addgrids3d(x[, 1:3], grid = c("xy", "xz", "yz"))
