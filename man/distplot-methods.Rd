@@ -3,12 +3,13 @@
 \docType{methods}
 \name{distplot}
 \alias{distplot}
-\alias{distplot,tpm,character,character-method}
+\alias{distplot,tpm,character,character,numeric-method}
 \title{distplot}
 \usage{
 distplot(obj, ylab, pdffout, probs = 0.85)
 
-\S4method{distplot}{tpm,character,character}(obj, ylab, pdffout, probs = 0.85)
+\S4method{distplot}{tpm,character,character,numeric}(obj, ylab, pdffout,
+  probs = 0.85)
 }
 \arguments{
 \item{obj}{A \code{tpm} object.}

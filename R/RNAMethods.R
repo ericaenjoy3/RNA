@@ -81,7 +81,7 @@ setMethod(f = "rmNonVar",
 #' @description
 #' Linear regression to adjust for batch effects.
 #' @param x A matrix of gene expression data with genes in the rows and samples in the cols.
-#' @param covar A matrix/data.frame or vector of covariates.
+#' @param covar A data.frame covariates.
 #' @param add.mean A logical vector indicating whether to add group mean to the residuals
 #' @export lmAdjCovar
 setGeneric(name = "lmAdjCovar",
@@ -92,17 +92,12 @@ setGeneric(name = "lmAdjCovar",
 
 #' @rdname lmAdjCovar-methods
 setMethod(f = "lmAdjCovar",
-  signature = c("numeric", "data.frame", "logical"),
-  definition = function(x, covar, add.mean){
-    #function to correct for covariates using linear regression
-    #x, a matrix of gene expression data with genes in the rows and samples in the cols
-    #covar, a matrix/data.frame or vector of covariates
-  	stopifnot(ncol(x) == nrow(covar))
-  	colnames(covar) <- paste0('V', 1:ncol(covar))
-  	x <- t(x)
-  	t(lm(x~., data = covar)$residuals) +
-      if(add.mean){colMeans(x)} else {0}
-  }
+  signature = c("matrix", "data.frame", "logical"),
+  definition = function(x, covar, add.mean = TRUE){
+    stopifnot(ncol(x) == nrow(covar))
+    colnames(covar) <- paste0('V', 1:ncol(covar))
+    x <- t(x)
+    t(lm(x~., data = covar)$residuals) + if(add.mean){colMeans(x)}else{0}}
 )
 
 #' @title loessnorm
@@ -222,7 +217,7 @@ setMethod(f = "corplot",
           scale_y_continuous(breaks = c(0, as.numeric(thresh)))
       }
     }
-    pdf(pdffout)
+    pdf(pdffout, height = 7 * (ncol(obj@tpm.value)/10), width = 7 *(ncol(obj@tpm.value)/10))
     print(pm2)
     dev.off()
   }
@@ -248,8 +243,17 @@ setMethod(f = "hireplot",
   definition = function(obj, pdffout) {
     corstats <- cor(obj@tpm.value,method="spearman")
     grps <- factor(obj@grps,levels=unique(obj@grps),ordered=T)
-    tip.col <- brewer.pal(length(levels(grps)), "Dark2")[as.numeric(grps)]
-    pdf(pdffout)
+    tip.col <- if(length(levels(grps)) < 3) {
+      brewer.pal(3, "Dark2")[1:2]
+    } else if (length(levels(grps)) <= 8) {
+      brewer.pal(length(levels(grps)), "Dark2")
+    } else if (length(levels(grps)) <= 12) {
+      brewer.pal(length(levels(grps)), "Paired")
+    } else if (length(levels(grps)) > 12) {
+      colorRampPalette(brewer.pal(12, "Paired"))(length(levels(grps)))
+    }
+    tip.col <- tip.col[as.numeric(grps)]
+    pdf(pdffout, height = 7 * (ncol(obj@tpm.value)/10), width = 7 *(ncol(obj@tpm.value)/10))
     plot(as.phylo(hclust(as.dist(1-corstats), method = "average")),
       cex = 2, label.offset = 0, tip.color = tip.col)
     dev.off()
@@ -399,7 +403,7 @@ setMethod(f = "PCAplot",
     cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(obj@grps), ordered = TRUE))]
     x$colors <- cols
     pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
-    pdf(pdffout, pointsize = 14)
+    pdf(pdffout, pointsize = 14, height = 7 * (ncol(obj@tpm.value)/10), width = 7 *(ncol(obj@tpm.value)/10))
     par(mar = c(1, 1, 1, 1))
     s3d <- scatterplot3d(x[ , 1:3], grid = FALSE, box = FALSE, mar = c(3, 3, 2, 2), pch = "")
     addgrids3d(x[, 1:3], grid = c("xy", "xz", "yz"))
@@ -620,40 +624,34 @@ setMethod(f = "kHeat",
     if (scale.it) {
       mat <- t(apply(mat, 1, scale))
     }
+    colnames(mat) <- colnames(obj@tpm.value)
     if (is.null(k)) {
         message("clusing function when k is null.")
-        pr_mb <- clusing(data.frame(mat), pdffout = gsub(".pdf","_optK.pdf", pdffout))
+        cl <- clusing(data.frame(mat), pdffout = gsub(".pdf","_optK.pdf", pdffout))
         message("Heatmap function when k is null.")
-        ht_list <- Heatmap(mat, show_row_names = TRUE, show_column_names = TRUE, cluster_rows = TRUE,
-          show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
-          heatmap_legend_param = list(title = "", color_bar = "continuous"),
-          clustering_distance_rows = "spearman", clustering_method_rows = "average",
-          clustering_distance_columns = "spearman", clustering_method_columns = "average",
-          split = factor(pr_mb), gap = unit(3, "mm"))
     } else {
         message("heatmap function when k is ", k)
         set.seed(888)
-        ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
-          show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
-          heatmap_legend_param = list(title = "", color_bar = "continuous"),
-          clustering_distance_rows = "spearman", clustering_method_rows = "average",
-          clustering_distance_columns = "spearman", clustering_method_columns = "average",
-          km = k, gap = unit(3, "mm"))
+        cl <- kmeans(mat, k)$cluster
     }
-    # png(pngfout,width=2500*2,height=2500,res=300)
+    ht_list <- Heatmap(mat, show_row_names = FALSE, show_column_names = TRUE, cluster_rows = TRUE,
+      show_row_dend = FALSE,  cluster_columns = FALSE, show_column_dend = FALSE,
+      heatmap_legend_param = list(title = "", color_bar = "continuous"),
+      clustering_distance_rows = "spearman", clustering_method_rows = "average",
+      clustering_distance_columns = "spearman", clustering_method_columns = "average",
+      split = factor(cl), gap = unit(3, "mm"))
     pdf(pdffout)
     draw(ht_list)
     dev.off()
     message("running prepare function...")
     ht.obj <- prepare(ht_list)
     message("done with prepare function...")
-    idx.dat <- do.call("rbind",
-      lapply(seq_along(ht.obj@row_order_list),function(i){
-        data.frame(cluster = i, idx = ht.obj@row_order_list[[i]])
-      })
-    )
-    idx.dat <- idx.dat[order(idx.dat[, "idx"]), ]
-    dat <- data.frame(gene = rownames(mat), idx.dat, mat = mat)
+    row_list <- row_order(ht_list)
+    dd <- do.call("rbind", lapply(seq_along(row_list),
+      function(i){data.frame(cluster = i, ori.idx = row_list[[i]], idx = seq_along(row_list[[i]]))}))
+    dat <- data.frame(gene = rownames(mat)[dd$ori.idx], dd, mat = mat[dd$ori.idx,])
+    dat <- dat[order(dat$ori.idx), grep("ori.idx", colnames(dat), invert = TRUE, fixed = TRUE)]
+    colnames(dat)[-c(1:3)] <- colnames(mat)
     write.table(dat,
       file = gsub("pdf", "txt", pdffout),
       row.names = FALSE, col.names = TRUE,

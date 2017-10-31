@@ -3,17 +3,17 @@
 \docType{methods}
 \name{lmAdjCovar}
 \alias{lmAdjCovar}
-\alias{lmAdjCovar,numeric,data.frame,logical-method}
+\alias{lmAdjCovar,matrix,data.frame,logical-method}
 \title{lmAdjCovar}
 \usage{
 lmAdjCovar(x, covar, add.mean = TRUE)
 
-\S4method{lmAdjCovar}{numeric,data.frame,logical}(x, covar, add.mean = TRUE)
+\S4method{lmAdjCovar}{matrix,data.frame,logical}(x, covar, add.mean = TRUE)
 }
 \arguments{
 \item{x}{A matrix of gene expression data with genes in the rows and samples in the cols.}
 
-\item{covar}{A matrix/data.frame or vector of covariates.}
+\item{covar}{A data.frame covariates.}
 
 \item{add.mean}{A logical vector indicating whether to add group mean to the residuals}
 }

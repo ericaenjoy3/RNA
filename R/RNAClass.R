@@ -18,7 +18,7 @@
 #' @import ModClusterR
 #' @import methods
 #' @importFrom utils read.table write.table combn
-#' @importFrom stats cor model.matrix as.dist hclust cutree quantile lm var prcomp
+#' @importFrom stats cor model.matrix as.dist hclust cutree quantile lm var prcomp kmeans
 #' @importFrom graphics plot text legend par
 #' @importFrom cluster pam
 ###
