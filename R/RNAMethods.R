@@ -413,7 +413,8 @@ setMethod(f = "PCAplot",
         box.padding = 0.35, point.padding = 0.5,
         segment.color = 'grey50') +
         theme(legend.title = element_blank(), panel.spacing = unit(2, "lines"), legend.position = "top")
-      ggsave(filename = pdffout, plot = p1)
+      ggsave(filename = pdffout, plot = p1, height = max(7, 7 * (ncol(obj@tpm.value)/15)),
+        width = max(7, 7 *(ncol(obj@tpm.value)/15)), units = "in")
     } else {
       pdf(pdffout, pointsize = 14, height = max(7, 7 * (ncol(obj@tpm.value)/30)),
         width = max(7, 7 *(ncol(obj@tpm.value)/30)))
