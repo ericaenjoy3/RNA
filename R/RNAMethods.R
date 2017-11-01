@@ -352,11 +352,12 @@ setMethod(f = "bplot",
 #' @param excl.col A numeric vector indicating columns to be excluded from the \code{tpm} slot of a \code{tpm} object.
 #' @param ntop A numeric value indicating selection of the top N most variably expressed genes, or Inf (default).
 #' @param isLog A logical value of whether the \code{tpm} data is already log2 transformed.
+#' @param pca2d A logical value indicating whether 2D instead of 3D PCA.
 #' @param small A numeric vector indicating the adjustment to the TPM values before log2 transformation.
 #' @export PCAplot
 setGeneric(name = "PCAplot",
   def = function(obj, pdffout, fout = NULL, excl.col = NULL,
-    ntop = Inf, isLog = FALSE, small = 0.05) {
+    ntop = Inf, isLog = FALSE, pca2d = FALSE, small = 0.05) {
     standardGeneric("PCAplot")
   }
 )
@@ -364,7 +365,7 @@ setGeneric(name = "PCAplot",
 #' @rdname PCAplot-methods
 setMethod(f = "PCAplot",
   signature = "tpm",
-  definition = function(obj, pdffout, fout, excl.col, ntop, isLog, small) {
+  definition = function(obj, pdffout, fout, excl.col, ntop, isLog, pca2d, small) {
     out <- function(dat, fout) {
       tmp <- data.frame(gene = rownames(dat), dat)
       write.table(tmp, file = fout, row.names = F,
@@ -402,17 +403,26 @@ setMethod(f = "PCAplot",
     cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(obj@grps), ordered = TRUE))]
     x$colors <- cols
     pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
-    pdf(pdffout, pointsize = 14, height = max(7, 7 * (ncol(obj@tpm.value)/25)), width = max(7, 7 *(ncol(obj@tpm.value)/20)))
-    par(mar = c(1, 1, 1, 1))
-    s3d <- scatterplot3d(x[ , 1:3], grid = FALSE, box = FALSE, mar = c(3, 3, 2, 2), pch = "")
-    addgrids3d(x[, 1:3], grid = c("xy", "xz", "yz"))
-    #s3d$points3d(x[, 1:3], pch=16, col=x$colors)
-    text(s3d$xyz.convert(x[, 1:3] + 1), labels=1:nrow(x), col=x$colors)
-    legend(par('usr')[1] - 0.5,par('usr')[4] + 0.3,
-      legend = paste0(1:nrow(x), ": ", rownames(x)),
-      pch = 20, col = x$colors, xpd = TRUE,
-      ncol = 3, cex = 0.7)
-    dev.off()
+    # 2D vs 3D PCA
+    if (pca2d) {
+      p1 <- ggplot(x, aes_(x = ~pc1, y = ~pc2, color = ~colors)) + geom_point(shape = 1) +
+      labs(x = "PC1", y = "PC2") +
+      theme(legend.title = element_blank(), panel.spacing = unit(2, "lines"), legend.position = "top")
+      ggsave(filename = pdffout, plot = p1)
+    } else {
+      pdf(pdffout, pointsize = 14, height = max(7, 7 * (ncol(obj@tpm.value)/30)),
+        width = max(7, 7 *(ncol(obj@tpm.value)/30)))
+      par(mar = c(1, 1, 1, 1))
+      s3d <- scatterplot3d(x[ , 1:3], grid = FALSE, box = FALSE, mar = c(3, 3, 2, 2), pch = "")
+      addgrids3d(x[, 1:3], grid = c("xy", "xz", "yz"))
+      #s3d$points3d(x[, 1:3], pch=16, col=x$colors)
+      text(s3d$xyz.convert(x[, 1:3] + 1), labels=1:nrow(x), col=x$colors)
+      legend(par('usr')[1] - 0.5,par('usr')[4] + 0.3,
+        legend = paste0(1:nrow(x), ": ", rownames(x)),
+        pch = 20, col = x$colors, xpd = TRUE,
+        ncol = 3, cex = 0.7)
+      dev.off()
+    }
   }
 )
 

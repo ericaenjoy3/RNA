@@ -7,10 +7,10 @@
 \title{PCAplot}
 \usage{
 PCAplot(obj, pdffout, fout = NULL, excl.col = NULL, ntop = Inf,
-  isLog = FALSE, small = 0.05)
+  isLog = FALSE, pca2d = FALSE, small = 0.05)
 
 \S4method{PCAplot}{tpm}(obj, pdffout, fout = NULL, excl.col = NULL,
-  ntop = Inf, isLog = FALSE, small = 0.05)
+  ntop = Inf, isLog = FALSE, pca2d = FALSE, small = 0.05)
 }
 \arguments{
 \item{obj}{A \code{tpm} object.}
@@ -24,6 +24,8 @@ PCAplot(obj, pdffout, fout = NULL, excl.col = NULL, ntop = Inf,
 \item{ntop}{A numeric value indicating selection of the top N most variably expressed genes, or Inf (default).}
 
 \item{isLog}{A logical value of whether the \code{tpm} data is already log2 transformed.}
+
+\item{pca2d}{A logical value indicating whether 2D instead of 3D PCA.}
 
 \item{small}{A numeric vector indicating the adjustment to the TPM values before log2 transformation.}
 }
