@@ -5,7 +5,7 @@ Author: Erica Liu
 Maintainer: Erica LIu <ericaenjoy3@yahoo.co.uk>
 Description: Perform RNA-seq data analysis and plotting.
 Depends: R (>= 3.4.0)
-Imports: ComplexHeatmap, GGally, GOtest, ModClusterR, RColorBrewer, addgrids3d, affy, ape, circlize, data.table, ggplot2, limma, multiplot, methods, pheatmap, scales, scatterplot3d, cluster
+Imports: ComplexHeatmap, GGally, GOtest, ModClusterR, RColorBrewer, addgrids3d, affy, ape, circlize, data.table, ggplot2, limma, multiplot, methods, pheatmap, scales, scatterplot3d, cluster, ggrepel
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

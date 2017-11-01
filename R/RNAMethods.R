@@ -403,11 +403,17 @@ setMethod(f = "PCAplot",
     cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(obj@grps), ordered = TRUE))]
     x$colors <- cols
     pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
+    browser()
     # 2D vs 3D PCA
     if (pca2d) {
-      p1 <- ggplot(x, aes_(x = ~PC1, y = ~PC2, color = ~colors)) + geom_point(shape = 1) +
-      labs(x = "PC1", y = "PC2") +
-      theme(legend.title = element_blank(), panel.spacing = unit(2, "lines"), legend.position = "top")
+      p1 <- ggplot(x) +
+      geom_point(aes_(x = ~PC1, y = ~ PC2), size = 5, color = 'grey') +
+      geom_label_repel(
+        aes_(x = ~ PC1, y = ~ PC2, fill = obj@grps, label = rownames(x)),
+        fontface = 'bold', color = 'white',
+        box.padding = 0.35, point.padding = 0.5,
+        segment.color = 'grey50') +
+        theme_classic(base_size = 16)
       ggsave(filename = pdffout, plot = p1)
     } else {
       pdf(pdffout, pointsize = 14, height = max(7, 7 * (ncol(obj@tpm.value)/30)),
@@ -416,7 +422,7 @@ setMethod(f = "PCAplot",
       s3d <- scatterplot3d(x[ , 1:3], grid = FALSE, box = FALSE, mar = c(3, 3, 2, 2), pch = "")
       addgrids3d(x[, 1:3], grid = c("xy", "xz", "yz"))
       #s3d$points3d(x[, 1:3], pch=16, col=x$colors)
-      text(s3d$xyz.convert(x[, 1:3] + 1), labels=1:nrow(x), col=x$colors)
+      text(s3d$xyz.convert(x[, 1:3] + 1), labels = 1:nrow(x), col = x$colors)
       legend(par('usr')[1] - 0.5,par('usr')[4] + 0.3,
         legend = paste0(1:nrow(x), ": ", rownames(x)),
         pch = 20, col = x$colors, xpd = TRUE,
