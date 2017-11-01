@@ -405,7 +405,7 @@ setMethod(f = "PCAplot",
     pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
     # 2D vs 3D PCA
     if (pca2d) {
-      p1 <- ggplot(x, aes_(x = ~pc1, y = ~pc2, color = ~colors)) + geom_point(shape = 1) +
+      p1 <- ggplot(x, aes_(x = ~PC1, y = ~PC2, color = ~colors)) + geom_point(shape = 1) +
       labs(x = "PC1", y = "PC2") +
       theme(legend.title = element_blank(), panel.spacing = unit(2, "lines"), legend.position = "top")
       ggsave(filename = pdffout, plot = p1)
