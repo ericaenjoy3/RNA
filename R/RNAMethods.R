@@ -403,7 +403,6 @@ setMethod(f = "PCAplot",
     cols <- uniq.cols[as.numeric(factor(obj@grps, levels = unique(obj@grps), ordered = TRUE))]
     x$colors <- cols
     pch <- as.numeric(factor(rownames(x)), ordered = TRUE)
-    browser()
     # 2D vs 3D PCA
     if (pca2d) {
       p1 <- ggplot(x) +
@@ -413,7 +412,7 @@ setMethod(f = "PCAplot",
         fontface = 'bold', color = 'white',
         box.padding = 0.35, point.padding = 0.5,
         segment.color = 'grey50') +
-        theme_classic(base_size = 16)
+        theme(legend.title = element_blank(), panel.spacing = unit(2, "lines"), legend.position = "top")
       ggsave(filename = pdffout, plot = p1)
     } else {
       pdf(pdffout, pointsize = 14, height = max(7, 7 * (ncol(obj@tpm.value)/30)),
