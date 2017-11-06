@@ -704,7 +704,7 @@ setGeneric(name = "limmaDiff",
 setMethod(f = "limmaDiff",
   signature = c("tpm"),
   definition = function(obj, dout, pat, MA.it, HEAT.it, GO.it, DiffOut.it, logFCthresh, PValthresh, log2.it, small) {
-    stopifnot(all(obj@tpm.value>=0))
+    stopifnot(ncol(obj@tpm.value)>0)
     grps <- factor(obj@grps)
     if (log2.it) {
       tpm.value <- log2(obj@tpm.value + small)
