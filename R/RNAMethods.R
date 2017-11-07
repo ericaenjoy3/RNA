@@ -718,8 +718,8 @@ setMethod(f = "limmaDiff",
     contrast.matrix <- makeContrasts(contrasts = contrast, levels = design)
     fit <- contrasts.fit(fit, contrast.matrix)
     fit <- eBayes(fit)
-    dat.list <- lapply(contrast,function(coef){
-      dd <- topTable(fit, adjust.method = "BH", number = Inf, coef = coef, sort.by = 'none')
+    dat.list <- lapply(contrast, function(const){
+      dd <- topTable(fit, adjust.method = "BH", number = Inf, coef = const, sort.by = 'none')
       dd <- dd[,c("logFC","P.Value","adj.P.Val")]
       query.population <- gsub(
         "[^\\|]+\\|([^\\|]+)\\|[^\\|]+(\\|[^\\|]+){0,1}",
@@ -731,25 +731,25 @@ setMethod(f = "limmaDiff",
         dd[up.idx, "DEG"] <- "Up"
         dd[down.idx, "DEG"] <- "Down"
         if (MA.it) {
-          MAchart(dd, pdffout = file.path(dout, paste0(pat, "_", coef, "_MA.pdf")))
+          MAchart(dd, pdffout = file.path(dout, paste0(pat, "_", const, "_MA.pdf")))
         }
         if (HEAT.it) {
-          sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", coef)
-          sm2 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\2", coef)
-          diffHeatmap(tpm.value, col.idx = c(grep(sm1, as.character(grps)), grep(sm2, as.character(grps))),
-            row.idx = which(dd$DEG != "NDiff"), pdffout = file.path(dout, paste0(pat, "_", coef, "_diffHeatmap.pdf")),
-            cutreek = NULL, log.it.already = log2.it)
+          sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", const)
+          sm2 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\2", const)
+          diffHeatmap(tpm.value, col.idx = which(as.character(grps) %in% c(sm1, sm2)), row.idx = which(dd$DEG != "NDiff"), 
+			pdffout = file.path(dout, paste0(pat, "_", const, "_diffHeatmap.pdf")),
+            cutreek = NULL, log.it.already = TRUE)
         }
         if (GO.it) {
           DEG <- data.frame(gene = query.population[c(up.idx, down.idx)],
             group = dd$DEG[c(up.idx, down.idx)], stringsAsFactors = FALSE)
           Res <- msigdb.gsea(DEG, query.population = query.population, background = 'query',
             genesets = c('C2.CP','C5.BP','C5.CC','C5.MF'), name.x='DEGs', name.go='MSigDB', species='mouse')
-          write.table(Res, file = file.path(dout, paste0(pat, "_", coef, "_GO.xls")), row.names = FALSE,
+          write.table(Res, file = file.path(dout, paste0(pat, "_", const, "_GO.xls")), row.names = FALSE,
             col.names = TRUE, quote = FALSE, sep = "\t")
         }
       };
-      colnames(dd) <- paste(colnames(dd), coef, sep="_")
+      colnames(dd) <- paste(colnames(dd), const, sep="_")
       return(dd)
     })
     dat <- do.call("cbind",dat.list)
