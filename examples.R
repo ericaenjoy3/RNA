@@ -1,5 +1,9 @@
 #!/usr/bin/env Rscript
 
+# RNA Library
+library(RNA)
+
+# Other library
 libs <- c("data.table", "limma", "affy", "ggplot2", "scatterplot3d",
   "RColorBrewer", "grDevices", "scales", "GGally", "GOtest", "ape",
   "pheatmap", "ComplexHeatmap", "circlize", "multiplot", "addgrids3d")

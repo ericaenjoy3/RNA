@@ -689,13 +689,14 @@ setMethod(f = "kHeat",
 #' @param DiffOut.it A logical value specifying whether to write out differential analysis data to file.
 #' @param logFCthresh A numeric value specifying the log2 fold change threshold for data to be called differential.
 #' @param PValthresh A numeric value specifying the pvalue threshold for data to be called differential.
+#' @param PADJthresh A numeric value specifying the adjusted pvalue threshold for data to be called differential, overriding the specification of pvalue threshold.
 #' @param log2.it A logical value specifying whether to perform log2 transformation.
 #' @param small A numeric value indicating the adjustment to the TPM values before log2 transformation.
 #' @export limmaDiff
 setGeneric(name = "limmaDiff",
   def = function(obj, dout, pat,
     MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE, DiffOut.it = TRUE,
-    logFCthresh = 1, PValthresh = 0.05, log2.it = TRUE, small = 0.05) {
+    logFCthresh = 1, PValthresh = NULL, PADJthresh = NULL, log2.it = TRUE, small = 0.05) {
     standardGeneric("limmaDiff")
   }
 )
@@ -703,8 +704,17 @@ setGeneric(name = "limmaDiff",
 #' @rdname limmaDiff-methods
 setMethod(f = "limmaDiff",
   signature = c("tpm"),
-  definition = function(obj, dout, pat, MA.it, HEAT.it, GO.it, DiffOut.it, logFCthresh, PValthresh, log2.it, small) {
+  definition = function(obj, dout, pat, MA.it, HEAT.it, GO.it, DiffOut.it, logFCthresh, PValthresh, PADJthresh, log2.it, small) {
     stopifnot(ncol(obj@tpm.value)>0)
+    if (!is.null(PADJthresh)) {
+      signcol <- "adj.P.Val"
+      signthresh <- PADJthresh
+    } else if (!is.null(PValthresh)) {
+      signcol <- "P.Value"
+      signthresh <- PValthresh
+    } else {
+      stop("Error: either PADJthresh or PValthresh need to be specified in limmaDiff...exiting...")
+    }
     grps <- factor(obj@grps)
     if (log2.it) {
       tpm.value <- log2(obj@tpm.value + small)
@@ -724,8 +734,8 @@ setMethod(f = "limmaDiff",
       query.population <- gsub(
         "[^\\|]+\\|([^\\|]+)\\|[^\\|]+(\\|[^\\|]+){0,1}",
         "\\1", rownames(dd))
-      up.idx <- which(dd[,"logFC"] >= logFCthresh & dd[,"P.Value"] <= PValthresh)
-      down.idx <- which(dd[,"logFC"] <= (-logFCthresh) & dd[,"P.Value"] <= PValthresh)
+      up.idx <- which(dd[,"logFC"] >= logFCthresh & dd[, signcol] <= signthresh)
+      down.idx <- which(dd[,"logFC"] <= (-logFCthresh) & dd[, signcol] <= signthresh)
       if (length(up.idx) > 0 || length(down.idx) > 0) {
         dd$DEG <- "NDiff"
         dd[up.idx, "DEG"] <- "Up"
@@ -736,7 +746,7 @@ setMethod(f = "limmaDiff",
         if (HEAT.it) {
           sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", const)
           sm2 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\2", const)
-          diffHeatmap(tpm.value, col.idx = which(as.character(grps) %in% c(sm1, sm2)), row.idx = which(dd$DEG != "NDiff"), 
+          diffHeatmap(tpm.value, col.idx = which(as.character(grps) %in% c(sm1, sm2)), row.idx = which(dd$DEG != "NDiff"),
 			pdffout = file.path(dout, paste0(pat, "_", const, "_diffHeatmap.pdf")),
             cutreek = NULL, log.it.already = TRUE)
         }

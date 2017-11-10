@@ -7,12 +7,12 @@
 \title{limmaDiff}
 \usage{
 limmaDiff(obj, dout, pat, MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE,
-  DiffOut.it = TRUE, logFCthresh = 1, PValthresh = 0.05, log2.it = TRUE,
-  small = 0.05)
+  DiffOut.it = TRUE, logFCthresh = 1, PValthresh = NULL,
+  PADJthresh = NULL, log2.it = TRUE, small = 0.05)
 
 \S4method{limmaDiff}{tpm}(obj, dout, pat, MA.it = TRUE, HEAT.it = TRUE,
-  GO.it = TRUE, DiffOut.it = TRUE, logFCthresh = 1, PValthresh = 0.05,
-  log2.it = TRUE, small = 0.05)
+  GO.it = TRUE, DiffOut.it = TRUE, logFCthresh = 1, PValthresh = NULL,
+  PADJthresh = NULL, log2.it = TRUE, small = 0.05)
 }
 \arguments{
 \item{obj}{A \code{tpm} object.}
@@ -32,6 +32,8 @@ limmaDiff(obj, dout, pat, MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE,
 \item{logFCthresh}{A numeric value specifying the log2 fold change threshold for data to be called differential.}
 
 \item{PValthresh}{A numeric value specifying the pvalue threshold for data to be called differential.}
+
+\item{PADJthresh}{A numeric value specifying the adjusted pvalue threshold for data to be called differential, overriding the specification of pvalue threshold.}
 
 \item{log2.it}{A logical value specifying whether to perform log2 transformation.}
 
