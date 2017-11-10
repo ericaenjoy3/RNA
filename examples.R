@@ -55,17 +55,17 @@ genefilter.obj <- rmLow(gene.obj, thresh = 1)
 genevar.obj <- rmNonVar(genefilter.obj, probs = 0.1)
 dat <- limmaDiff(genefilter.obj, dout, pat = "Daf",
   MA.it = TRUE, HEAT.it = TRUE, GO.it = TRUE, DiffOut.it = TRUE,
-  logFCthresh = 1, PValthresh = 10^(-5), log2.it = TRUE, small = 0.05)
+  logFCthresh = 1, PValthresh = NULL, PADJthresh = 0.01, log2.it = TRUE, small = 0.05)
 
 # differential expressed genes and also in genevar.obj -------------------------
-ridx <- apply(dat[,grep("DEG", colnames(dat))], 1 ,
-  function(vec)any(vec != 'NDiff'))
+gid <- rownames(dat)[apply(dat[,grep("DEG", colnames(dat))], 1 ,
+  function(vec)any(vec != 'NDiff'))]
 com.obj <- new("tpm",
   tpm.value = genefilter.obj@tpm.value[rownames(dat)[ridx] %in% rownames(genevar.obj@tpm.value), ],
   grps = genefilter.obj@grps)
-ridx <- dat[, "DEG_ESC.MEF"] != 'NDiff' & apply(dat[, grep("^(ESC|MEF)", colnames(dat))], 1, function(vec)any(vec>10))
+gid <- rownames(dat)[dat[, "DEG_ESC.MEF"] != 'NDiff' & apply(dat[, grep("^(ESC|MEF)", colnames(dat))], 1, function(vec)any(vec>10))]
 esc.obj <- new("tpm",
-  tpm.value = genefilter.obj@tpm.value[ridx, ],
+  tpm.value = genefilter.obj@tpm.value[gid, ],
   grps = genefilter.obj@grps)
 
 

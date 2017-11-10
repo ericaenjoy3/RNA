@@ -736,29 +736,28 @@ setMethod(f = "limmaDiff",
         "\\1", rownames(dd))
       up.idx <- which(dd[,"logFC"] >= logFCthresh & dd[, signcol] <= signthresh)
       down.idx <- which(dd[,"logFC"] <= (-logFCthresh) & dd[, signcol] <= signthresh)
-      if (length(up.idx) > 0 || length(down.idx) > 0) {
-        dd$DEG <- "NDiff"
-        dd[up.idx, "DEG"] <- "Up"
-        dd[down.idx, "DEG"] <- "Down"
-        if (MA.it) {
-          MAchart(dd, pdffout = file.path(dout, paste0(pat, "_", const, "_MA.pdf")))
-        }
-        if (HEAT.it) {
-          sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", const)
-          sm2 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\2", const)
-          diffHeatmap(tpm.value, col.idx = which(as.character(grps) %in% c(sm1, sm2)), row.idx = which(dd$DEG != "NDiff"),
-			pdffout = file.path(dout, paste0(pat, "_", const, "_diffHeatmap.pdf")),
-            cutreek = NULL, log.it.already = TRUE)
-        }
-        if (GO.it) {
-          DEG <- data.frame(gene = query.population[c(up.idx, down.idx)],
-            group = dd$DEG[c(up.idx, down.idx)], stringsAsFactors = FALSE)
-          Res <- msigdb.gsea(DEG, query.population = query.population, background = 'query',
-            genesets = c('C2.CP','C5.BP','C5.CC','C5.MF'), name.x='DEGs', name.go='MSigDB', species='mouse')
-          write.table(Res, file = file.path(dout, paste0(pat, "_", const, "_GO.xls")), row.names = FALSE,
-            col.names = TRUE, quote = FALSE, sep = "\t")
-        }
-      };
+      stopifnot(length(up.idx) > 0 & length(down.idx) > 0)
+      dd$DEG <- "NDiff"
+      dd[up.idx, "DEG"] <- "Up"
+      dd[down.idx, "DEG"] <- "Down"
+      if (MA.it) {
+        MAchart(dd, pdffout = file.path(dout, paste0(pat, "_", const, "_MA.pdf")))
+      }
+      if (HEAT.it) {
+        sm1 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\1", const)
+        sm2 <- gsub("([^\\-]+)\\-([^\\-]+)", "\\2", const)
+        diffHeatmap(tpm.value, col.idx = which(as.character(grps) %in% c(sm1, sm2)), row.idx = which(dd$DEG != "NDiff"),
+		pdffout = file.path(dout, paste0(pat, "_", const, "_diffHeatmap.pdf")),
+          cutreek = NULL, log.it.already = TRUE)
+      }
+      if (GO.it) {
+        DEG <- data.frame(gene = query.population[c(up.idx, down.idx)],
+          group = dd$DEG[c(up.idx, down.idx)], stringsAsFactors = FALSE)
+        Res <- msigdb.gsea(DEG, query.population = query.population, background = 'query',
+          genesets = c('C2.CP','C5.BP','C5.CC','C5.MF'), name.x='DEGs', name.go='MSigDB', species='mouse')
+        write.table(Res, file = file.path(dout, paste0(pat, "_", const, "_GO.xls")), row.names = FALSE,
+          col.names = TRUE, quote = FALSE, sep = "\t")
+      }
       colnames(dd) <- paste(colnames(dd), const, sep="_")
       return(dd)
     })
