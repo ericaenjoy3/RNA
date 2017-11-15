@@ -246,10 +246,8 @@ setMethod(f = "hireplot",
       brewer.pal(3, "Dark2")[1:2]
     } else if (length(levels(grps)) <= 8) {
       brewer.pal(length(levels(grps)), "Dark2")
-    } else if (length(levels(grps)) <= 12) {
-      brewer.pal(length(levels(grps)), "Paired")
-    } else if (length(levels(grps)) > 12) {
-      colorRampPalette(brewer.pal(12, "Dark2"))(length(levels(grps)))
+    } else if (length(levels(grps)) > 8) {
+      colorRampPalette(brewer.pal(8, "Dark2"))(length(levels(grps)))
     }
     tip.col <- tip.col[as.numeric(grps)]
     pdf(pdffout, height = 7 * (ncol(obj@tpm.value)/10), width = 7 *(ncol(obj@tpm.value)/10))
