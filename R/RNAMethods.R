@@ -240,8 +240,8 @@ setGeneric(name = "hireplot",
 setMethod(f = "hireplot",
   signature = c("tpm"),
   definition = function(obj, pdffout) {
-    corstats <- cor(obj@tpm.value,method="spearman")
-    grps <- factor(obj@grps,levels=unique(obj@grps),ordered=T)
+    corstats <- cor(obj@tpm.value, method="spearman")
+    grps <- factor(obj@grps, levels = unique(obj@grps), ordered = T)
     tip.col <- if(length(levels(grps)) < 3) {
       brewer.pal(3, "Dark2")[1:2]
     } else if (length(levels(grps)) <= 8) {
@@ -249,7 +249,7 @@ setMethod(f = "hireplot",
     } else if (length(levels(grps)) <= 12) {
       brewer.pal(length(levels(grps)), "Paired")
     } else if (length(levels(grps)) > 12) {
-      colorRampPalette(brewer.pal(12, "Paired"))(length(levels(grps)))
+      colorRampPalette(brewer.pal(12, "Dark2"))(length(levels(grps)))
     }
     tip.col <- tip.col[as.numeric(grps)]
     pdf(pdffout, height = 7 * (ncol(obj@tpm.value)/10), width = 7 *(ncol(obj@tpm.value)/10))
