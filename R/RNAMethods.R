@@ -405,8 +405,8 @@ setMethod(f = "PCAplot",
     if (pca2d) {
       p1 <- ggplot(x) +
       geom_point(aes_(x = ~PC1, y = ~ PC2), size = 5, color = 'grey') +
-      labs(x = paste("PC1 (", round(ve[1], digits = 2), "of variance)", sep = " "),
-        y = paste("PC2 (", round(ve[2], digits = 2), "of variance)", sep = " ")) +
+      labs(x = paste0("PC1 (", round(ve[1], digits = 2), " of variance)"),
+        y = paste0("PC2 (", round(ve[2], digits = 2), " of variance)")) +
       geom_label_repel(
         aes_(x = ~ PC1, y = ~ PC2, fill = obj@grps, label = rownames(x)),
         fontface = 'bold', color = 'white',
